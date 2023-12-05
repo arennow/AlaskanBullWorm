@@ -17,6 +17,22 @@ struct AlaskanBullWorm {
 
 		return out
 	}
+
+	mutating func takeLine() throws -> Substring {
+		try self.processLine { $0 }
+	}
+
+	mutating func takeLines(until terminationPredicate: (Substring) -> Bool) throws -> Array<Substring> {
+		var out = Array<Substring>()
+
+		repeat {
+			let line = try self.takeLine()
+			if terminationPredicate(line) { break }
+			out.append(line)
+		} while !self.remainder.isEmpty
+
+		return out
+	}
 }
 
 private extension AlaskanBullWorm {

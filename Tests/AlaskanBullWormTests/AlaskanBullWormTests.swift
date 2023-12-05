@@ -38,4 +38,22 @@ final class AlaskanBullWormTests: XCTestCase {
 		}
 		XCTAssertEqual(abm.remainder, "")
 	}
+
+	func testTakeLinesUntil_middle() throws {
+		let src = "123\n456\n\n789"
+		var abm = AlaskanBullWorm(source: src)
+
+		let chunk = try abm.takeLines(until: { $0 == "" })
+		XCTAssertEqual(chunk, ["123", "456"])
+		XCTAssertEqual(abm.remainder, "789")
+	}
+
+	func testTakeLinesUntil_end() throws {
+		let src = "123\n456\n789"
+		var abm = AlaskanBullWorm(source: src)
+
+		let chunk = try abm.takeLines(until: { $0 == "" })
+		XCTAssertEqual(chunk, ["123", "456", "789"])
+		XCTAssertEqual(abm.remainder, "")
+	}
 }
