@@ -1,15 +1,15 @@
-struct AlaskanBullWorm {
-	enum Errors: Error {
+public struct AlaskanBullWorm {
+	public enum Errors: Error {
 		case notEnoughRemainder
 	}
 
 	private(set) var remainder: Substring
 
-	init(source: String) {
+	public init(source: String) {
 		self.remainder = source[...]
 	}
 
-	mutating func processLine<R>(_ processor: (Substring) throws -> R) throws -> R {
+	public mutating func processLine<R>(_ processor: (Substring) throws -> R) throws -> R {
 		let lineEndIndex = try self.indexOfNextLineEnd
 
 		let out = try processor(self.remainder[..<lineEndIndex])
@@ -18,11 +18,11 @@ struct AlaskanBullWorm {
 		return out
 	}
 
-	mutating func takeLine() throws -> Substring {
+	public mutating func takeLine() throws -> Substring {
 		try self.processLine { $0 }
 	}
 
-	mutating func takeLines(until terminationPredicate: (Substring) -> Bool) throws -> Array<Substring> {
+	public mutating func takeLines(until terminationPredicate: (Substring) -> Bool) throws -> Array<Substring> {
 		var out = Array<Substring>()
 
 		repeat {
