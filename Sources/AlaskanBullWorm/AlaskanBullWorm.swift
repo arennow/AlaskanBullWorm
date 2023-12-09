@@ -1,6 +1,6 @@
 public struct AlaskanBullWorm {
-	public enum Errors: Error {
-		case notEnoughRemainder
+	public enum Errors {
+		public struct NotEnoughRemiainder: Error {}
 	}
 
 	private(set) var remainder: Substring
@@ -33,12 +33,25 @@ public struct AlaskanBullWorm {
 
 		return out
 	}
+
+	public mutating func processLinesToEnd<R>(_ processor: (Substring) throws -> R) throws -> Array<R> {
+		var out = Array<R>()
+		while true {
+			do {
+				let res = try self.processLine(processor)
+				out.append(res)
+			} catch is Errors.NotEnoughRemiainder {
+				break
+			}
+		}
+		return out
+	}
 }
 
 private extension AlaskanBullWorm {
 	var indexOfNextLineEnd: Substring.Index {
 		get throws {
-			guard !self.remainder.isEmpty else { throw Errors.notEnoughRemainder }
+			guard !self.remainder.isEmpty else { throw Errors.NotEnoughRemiainder() }
 			return self.remainder.firstIndex(of: "\n") ?? self.remainder.endIndex
 		}
 	}

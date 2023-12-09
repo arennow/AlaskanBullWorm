@@ -30,11 +30,7 @@ final class AlaskanBullWormTests: XCTestCase {
 		var abm = AlaskanBullWorm(source: "")
 
 		XCTAssertThrowsError(try abm.processLine { _ in }) { error in
-			guard let abmError = error as? AlaskanBullWorm.Errors else {
-				XCTFail("Unexpected error type")
-				return
-			}
-			XCTAssertEqual(abmError, AlaskanBullWorm.Errors.notEnoughRemainder)
+			XCTAssert(error is AlaskanBullWorm.Errors.NotEnoughRemiainder)
 		}
 		XCTAssertEqual(abm.remainder, "")
 	}
@@ -54,6 +50,15 @@ final class AlaskanBullWormTests: XCTestCase {
 
 		let chunk = try abm.takeLines(until: { $0 == "" })
 		XCTAssertEqual(chunk, ["123", "456", "789"])
+		XCTAssertEqual(abm.remainder, "")
+	}
+
+	func testProcessLinesToEnd() throws {
+		let src = "123\n456\n789"
+		var abm = AlaskanBullWorm(source: src)
+
+		let output = try abm.processLinesToEnd { line in Int(line)! }
+		XCTAssertEqual(output, [123, 456, 789])
 		XCTAssertEqual(abm.remainder, "")
 	}
 }
