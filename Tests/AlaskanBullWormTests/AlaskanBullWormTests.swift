@@ -31,4 +31,39 @@ struct AlaskanBullWormTests {
 		#expect(abm.takeSpacedVisible() == "hi")
 		#expect(abm.takeSpacedVisible() == nil)
 	}
+
+	@Test
+	func char() {
+		var abm = AlaskanBullWorm("ab c def   g\t\thi ")
+
+		#expect(abm.takeChar("b") == nil)
+		#expect(abm.takeChar("a") == "a")
+		#expect(abm.takeChar("b") == "b")
+		#expect(abm.takeChar("c") == nil)
+	}
+
+	@Test
+	func wrapped_successful() {
+		var abm = AlaskanBullWorm("[abc]def")
+
+		#expect(abm.takeWrapped(l: "[", r: "]", innerPredicate: { !$0.isWhitespace }) == "abc")
+		#expect(abm.takeVisible() == "def")
+		#expect(abm.remainder.isEmpty)
+	}
+
+	@Test
+	func wrapped_failedInner() {
+		var abm = AlaskanBullWorm("[a c]")
+
+		#expect(abm.takeWrapped(l: "[", r: "]", innerPredicate: { !$0.isWhitespace }) == nil)
+		#expect(abm.remainder == "[a c]")
+	}
+
+	@Test
+	func wrapped_failedTrailing() {
+		var abm = AlaskanBullWorm("[abc)")
+
+		#expect(abm.takeWrapped(l: "[", r: "]", innerPredicate: { !$0.isWhitespace }) == nil)
+		#expect(abm.remainder == "[abc)")
+	}
 }
