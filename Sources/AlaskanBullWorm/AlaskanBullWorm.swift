@@ -1,7 +1,7 @@
 import Algorithms
 
 public struct AlaskanBullWorm {
-	public typealias Predicate = (Character) -> Bool
+	public typealias RawPredicate = (Character) -> Bool
 
 	public private(set) var remainder: Substring
 
@@ -9,12 +9,18 @@ public struct AlaskanBullWorm {
 		self.remainder = Substring(initial)
 	}
 
-	private mutating func take(predicate: Predicate) -> Substring? {
+	@discardableResult
+	public mutating func take(_ predicate: Predicate) -> Substring? {
+		self.take(predicate.rawPredicate)
+	}
+
+	@discardableResult
+	public mutating func take(_ rawPredicate: RawPredicate) -> Substring? {
 		var rangeEndIndex = self.remainder.startIndex
 
 		let indexSequence = chain(self.remainder.indices.dropFirst(), CollectionOfOne(self.remainder.endIndex))
 		for (i, c) in zip(indexSequence, self.remainder) {
-			if predicate(c) {
+			if rawPredicate(c) {
 				rangeEndIndex = i
 			} else {
 				break
@@ -33,24 +39,10 @@ public struct AlaskanBullWorm {
 	}
 
 	@discardableResult
-	public mutating func takeVisible() -> Substring? {
-		self.take(predicate: !\.isWhitespace)
-	}
-
-	@discardableResult
-	public mutating func takeWhitespaces() -> Substring? {
-		self.take(predicate: \.isWhitespace)
-	}
-
-	@discardableResult
+	@available(*, deprecated, message: "Clearly on its way out")
 	public mutating func takeSpacedVisible() -> Substring? {
-		self.takeWhitespaces()
-		return self.takeVisible()
-	}
-
-	@discardableResult
-	public mutating func takeChar(_ c: Character) -> Substring? {
-		self.take(predicate: { $0 == c })
+		self.take(.whitespace)
+		return self.take(.visible)
 	}
 
 	@discardableResult
@@ -58,13 +50,13 @@ public struct AlaskanBullWorm {
 		let before = self
 		func restore() { self = before }
 
-		let compositePredicate: Predicate = { c in
-			c != r && innerPredicate(c)
+		let compositePredicate: RawPredicate = { c in
+			c != r && innerPredicate.rawPredicate(c)
 		}
 
-		guard self.takeChar(l) != nil,
-			  let out = self.take(predicate: compositePredicate),
-			  self.takeChar(r) != nil
+		guard self.take(.char(l)) != nil,
+			  let out = self.take(compositePredicate),
+			  self.take(.char(r)) != nil
 		else {
 			restore()
 			return nil
