@@ -17,5 +17,6 @@
 --disable hoistAwait
 --disable hoistTry
 --disable conditionalAssignment
+--disable redundantStaticSelf
 --enable acronyms
 --enable numberFormatting
