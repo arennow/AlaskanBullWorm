@@ -38,11 +38,29 @@ public struct AlaskanBullWorm {
 		return outSubstring
 	}
 
+	public mutating func skipTake(skipRequired: Bool = false, _ skip: Predicate,
+								  takeRequired: Bool = true, _ take: Predicate) -> Substring?
+	{
+		let before = self
+
+		let skipRes = self.take(skip)
+		if skipRes == nil, skipRequired {
+			// No need to restore
+			return nil
+		}
+
+		let takeRes = self.take(take)
+		if takeRes == nil, takeRequired {
+			self = before
+			return nil
+		} else {
+			return takeRes
+		}
+	}
+
 	@discardableResult
-	@available(*, deprecated, message: "Clearly on its way out")
-	public mutating func takeSpacedVisible() -> Substring? {
-		self.take(.whitespace)
-		return self.take(.visible)
+	public mutating func skipWhitespaceTake(_ predicate: Predicate) -> Substring? {
+		self.skipTake(.whitespace, predicate)
 	}
 
 	@discardableResult

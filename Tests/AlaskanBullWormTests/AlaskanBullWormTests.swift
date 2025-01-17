@@ -15,21 +15,22 @@ struct AlaskanBullWormTests {
 		#expect(abm.take(.visible) == "g")
 		#expect(abm.take(.whitespace) != nil)
 		#expect(abm.take(.visible) == "hi")
-		#expect(abm.take(.whitespace) != nil)
+		#expect(abm.take(.whitespace) == " ")
 		#expect(abm.take(.whitespace) == nil)
 		#expect(abm.remainder.isEmpty)
 	}
 
 	@Test
-	func whitespaceSeparated() {
+	func skipWhitespaceTake() {
 		var abm = AlaskanBullWorm("ab c def   g\t\thi ")
 
-		#expect(abm.takeSpacedVisible() == "ab")
-		#expect(abm.takeSpacedVisible() == "c")
-		#expect(abm.takeSpacedVisible() == "def")
-		#expect(abm.takeSpacedVisible() == "g")
-		#expect(abm.takeSpacedVisible() == "hi")
-		#expect(abm.takeSpacedVisible() == nil)
+		#expect(abm.skipWhitespaceTake(.visible) == "ab")
+		#expect(abm.skipWhitespaceTake(.visible) == "c")
+		#expect(abm.skipWhitespaceTake(.visible) == "def")
+		#expect(abm.skipWhitespaceTake(.visible) == "g")
+		#expect(abm.skipWhitespaceTake(.visible) == "hi")
+		#expect(abm.skipWhitespaceTake(.visible) == nil)
+		#expect(abm.remainder == " ")
 	}
 
 	@Test
@@ -65,5 +66,24 @@ struct AlaskanBullWormTests {
 
 		#expect(abm.takeWrapped(l: "[", r: "]", innerPredicate: .visible) == nil)
 		#expect(abm.remainder == "[abc)")
+	}
+
+	@Test
+	func skipTake() {
+		var abm = AlaskanBullWorm("ab c def   g\t\thi ")
+
+		#expect(abm.skipTake(skipRequired: true, .char("a"), .char("b")) == "b")
+		#expect(abm.skipTake(.whitespace, .visible) == "c")
+		#expect(abm.take(.whitespace) == " ")
+		#expect(abm.remainder == "def   g\t\thi ")
+
+		#expect(abm.skipTake(skipRequired: true, .whitespace, .visible) == nil)
+		#expect(abm.remainder == "def   g\t\thi ")
+
+		#expect(abm.skipTake(.visible, .char("\t")) == nil)
+		#expect(abm.remainder == "def   g\t\thi ")
+
+		#expect(abm.skipTake(.visible, takeRequired: false, .char("\t")) == nil)
+		#expect(abm.remainder == "   g\t\thi ")
 	}
 }
