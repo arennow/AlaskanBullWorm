@@ -3,20 +3,32 @@ import Testing
 
 struct AlaskanBullWormTests {
 	@Test
-	func whitespaceSeparated() {
+	func whitespaceSeparated_manual() {
 		var abm = AlaskanBullWorm("ab c def   g\t\thi ")
 
-		#expect(abm.takeNonWhitespaces() == "ab")
+		#expect(abm.takeVisible() == "ab")
 		#expect(abm.takeWhitespaces() != nil)
-		#expect(abm.takeNonWhitespaces() == "c")
+		#expect(abm.takeVisible() == "c")
 		#expect(abm.takeWhitespaces() != nil)
-		#expect(abm.takeNonWhitespaces() == "def")
+		#expect(abm.takeVisible() == "def")
 		#expect(abm.takeWhitespaces() != nil)
-		#expect(abm.takeNonWhitespaces() == "g")
+		#expect(abm.takeVisible() == "g")
 		#expect(abm.takeWhitespaces() != nil)
-		#expect(abm.takeNonWhitespaces() == "hi")
+		#expect(abm.takeVisible() == "hi")
 		#expect(abm.takeWhitespaces() != nil)
 		#expect(abm.takeWhitespaces() == nil)
 		#expect(abm.remainder.isEmpty)
+	}
+
+	@Test
+	func whitespaceSeparated() {
+		var abm = AlaskanBullWorm("ab c def   g\t\thi ")
+
+		#expect(abm.takeSpacedVisible() == "ab")
+		#expect(abm.takeSpacedVisible() == "c")
+		#expect(abm.takeSpacedVisible() == "def")
+		#expect(abm.takeSpacedVisible() == "g")
+		#expect(abm.takeSpacedVisible() == "hi")
+		#expect(abm.takeSpacedVisible() == nil)
 	}
 }

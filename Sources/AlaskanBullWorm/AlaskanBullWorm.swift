@@ -31,12 +31,18 @@ public struct AlaskanBullWorm {
 	}
 
 	@discardableResult
-	public mutating func takeNonWhitespaces() -> Substring? {
+	public mutating func takeVisible() -> Substring? {
 		self.take(predicate: !\.isWhitespace)
 	}
 
 	@discardableResult
 	public mutating func takeWhitespaces() -> Substring? {
 		self.take(predicate: \.isWhitespace)
+	}
+
+	@discardableResult
+	public mutating func takeSpacedVisible() -> Substring? {
+		self.takeWhitespaces()
+		return self.takeVisible()
 	}
 }
