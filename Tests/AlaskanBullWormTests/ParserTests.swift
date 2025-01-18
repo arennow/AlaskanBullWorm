@@ -19,4 +19,13 @@ struct ParserTests {
 		#expect(parser(&src) == nil)
 		#expect(src == "123abc")
 	}
+
+	@Test
+	func exactStringParse() {
+		let parser = .exact("abc") <*> { String($0) }
+
+		var src: Substring = "abcdef"
+		#expect(parser(&src) == "abc")
+		#expect(src == "def")
+	}
 }

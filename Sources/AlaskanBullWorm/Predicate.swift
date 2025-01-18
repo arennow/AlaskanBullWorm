@@ -1,44 +1,19 @@
-import Algorithms
-
-public enum Predicate {
-	case custom((Character) -> Bool)
-	case visible
-	case whitespace
-	case asciiLetter
-	case char(Character)
-
-	public var rawPredicate: AlaskanBullWorm.RawPredicate {
-		switch self {
-			case .custom(let p): p
-			case .visible: !\.isWhitespace
-			case .whitespace: \.isWhitespace
-			case .asciiLetter: \.isASCII && \.isLetter
-			case .char(let c): { $0 == c }
-		}
-	}
+public protocol Predicate {
+	func take(from src: inout Substring) -> Substring?
 }
 
-public extension Predicate {
-	func take(from src: inout Substring) -> Substring? {
-		var rangeEndIndex = src.startIndex
+public extension Predicate where Self == CharPredicate {
+	static func custom(_ filter: @escaping (Character) -> Bool) -> Self { ._custom(filter) }
+	static func char(_ c: Character) -> Self { ._char(c) }
 
-		let indexSequence = chain(src.indices.dropFirst(), CollectionOfOne(src.endIndex))
-		for (i, c) in zip(indexSequence, src) {
-			if self.rawPredicate(c) {
-				rangeEndIndex = i
-			} else {
-				break
-			}
-		}
+	static var visible: Self { ._visible }
+	static var whitespace: Self { ._whitespace }
+	static var asciiLetter: Self { ._asciiLetter }
+	static var numeral: Self { ._numeral }
+}
 
-		guard rangeEndIndex > src.startIndex else {
-			return nil
-		}
-
-		let takenRange = src.startIndex..<rangeEndIndex
-
-		let outSubstring = src[takenRange]
-		src.removeSubrange(takenRange)
-		return outSubstring
+public extension Predicate where Self == ExactStringPredicate {
+	static func exact(_ needle: String) -> ExactStringPredicate {
+		ExactStringPredicate(needle)
 	}
 }
