@@ -42,4 +42,31 @@ struct ParserTests {
 		#expect(allP.parse(&src) == 30)
 		#expect(src.isEmpty)
 	}
+
+	@Test
+	func many0Parser() {
+		let manyP = many0(.exact("abc") <*> { String($0) })
+
+		var src: Substring = "abcabcabcabc"
+		#expect(manyP.parse(&src)?.count == 4)
+		#expect(src.isEmpty)
+	}
+
+	@Test
+	func many1Parser_success() {
+		let manyP = many1(.exact("abc") <*> { String($0) })
+
+		var src: Substring = "abcabcabcabc"
+		#expect(manyP.parse(&src)?.count == 4)
+		#expect(src.isEmpty)
+	}
+
+	@Test
+	func many1Parser_failure() {
+		let manyP = many1(.exact("abc") <*> { String($0) })
+
+		var src: Substring = "def"
+		#expect(manyP.parse(&src) == nil)
+		#expect(src == "def")
+	}
 }
