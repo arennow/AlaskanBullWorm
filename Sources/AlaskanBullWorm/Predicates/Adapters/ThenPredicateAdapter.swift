@@ -3,12 +3,6 @@ struct ThenPredicateAdapter<First: Predicate, Second: Predicate>: Predicate {
 	let second: Second
 	let requirements: InfixRequirements
 
-	init(first: First, second: Second, requirements: InfixRequirements) {
-		self.first = first
-		self.second = second
-		self.requirements = requirements
-	}
-
 	func take(from src: inout Substring) -> Substring? {
 		let beforeFirst = src
 

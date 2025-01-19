@@ -46,4 +46,48 @@ struct PredicateTests {
 		#expect(CharPredicate.visible.drop().then(.char("¿"), require: .second).take(from: &src) == nil)
 		#expect(src == "   g\t\thi ")
 	}
+
+	@Test
+	func wrapped_successful() {
+		var src: Substring = "[abc]def"
+
+		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == "abc")
+		#expect(src == "def")
+	}
+
+	@Test
+	func wrapped_successfulNested() {
+		var src: Substring = "[(abc)]def"
+
+		let pred = CharPredicate.visible
+			.wrapped("(", ")")
+			.wrapped("[", "]")
+
+		#expect(pred.take(from: &src) == "abc")
+		#expect(src == "def")
+	}
+
+	@Test
+	func wrapped_failedInner() {
+		var src: Substring = "[a c]"
+
+		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
+		#expect(src == "[a c]")
+	}
+
+	@Test
+	func wrapped_failedLeading() {
+		var src: Substring = "(abc]"
+
+		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
+		#expect(src == "(abc]")
+	}
+
+	@Test
+	func wrapped_failedTrailing() {
+		var src: Substring = "[abc)"
+
+		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
+		#expect(src == "[abc)")
+	}
 }
