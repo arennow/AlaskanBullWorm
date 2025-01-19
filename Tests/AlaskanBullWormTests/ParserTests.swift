@@ -4,7 +4,7 @@ import Testing
 struct ParserTests {
 	@Test
 	func basicParse() {
-		let parser = .custom(\.isWholeNumber) <*> { Int($0) }
+		let parser = .numeral <*> { Int($0) }
 
 		var src: Substring = "123abc"
 		#expect(parser(&src) == 123)
@@ -13,7 +13,7 @@ struct ParserTests {
 
 	@Test
 	func failedTransformDoesntTake() {
-		let parser = .custom(\.isWholeNumber) <*> { _ in Optional<Int>.none }
+		let parser = .numeral <*> { _ in Optional<Int>.none }
 
 		var src: Substring = "123abc"
 		#expect(parser(&src) == nil)
@@ -27,5 +27,19 @@ struct ParserTests {
 		var src: Substring = "abcdef"
 		#expect(parser(&src) == "abc")
 		#expect(src == "def")
+	}
+
+	@Test
+	func anyParser() {
+		let exactP = .numeral <*> { Int($0) }
+		let doubleP = .char("d").drop().then(.numeral) <*> { Int($0).map { $0 * 2 } }
+		let tripleP = .char("t").drop().then(.numeral) <*> { Int($0).map { $0 * 3 } }
+		let allP = exactP <||> doubleP <||> tripleP
+
+		var src: Substring = "10d10t10"
+		#expect(allP.parse(&src) == 10)
+		#expect(allP.parse(&src) == 20)
+		#expect(allP.parse(&src) == 30)
+		#expect(src.isEmpty)
 	}
 }
