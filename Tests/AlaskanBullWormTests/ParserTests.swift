@@ -80,11 +80,14 @@ struct ParserTests {
 			}
 		}
 
-		struct Location {
-			let string: String
+		enum Location: Equatable {
+			case literal(Int), register(String)
 			init?(string: some StringProtocol) {
-				guard ["$", "%"].contains(string.first) else { return nil }
-				self.string = String(string)
+				switch string.first {
+					case "$": self = .literal(Int(string.dropFirst())!)
+					case "%": self = .register(String(string.dropFirst()))
+					default: return nil
+				}
 			}
 		}
 
@@ -99,10 +102,7 @@ struct ParserTests {
 		#expect(instructionParser(&src) == Instruction.cp)
 		#expect(src == " $5 %raf")
 
-		#expect(locationParser.parse(&src)?.string == "$5")
-		#expect(src == " %raf")
-
-		#expect(locationParser.parse(&src)?.string == "%raf")
+		#expect(many0(locationParser).parse(&src) == [.literal(5), .register("raf")])
 		#expect(src.isEmpty)
 	}
 }
