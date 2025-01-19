@@ -90,4 +90,32 @@ struct PredicateTests {
 		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
 		#expect(src == "[abc)")
 	}
+
+	@Test
+	func anyPredicate() {
+		let pred = any(of: .numeral, .char("x"))
+
+		var src: Substring = "x123a"
+		#expect(pred.take(from: &src) == "x")
+		#expect(pred.take(from: &src) == "123")
+		#expect(pred.take(from: &src) == nil)
+		#expect(src == "a")
+	}
+
+	@Test
+	func compoundPredicate() {
+		let pred = any(of: .char("a"), .char("b"), .char("c"))
+			.then(.whitespace.drop(), require: .first)
+			.then(.numeral)
+
+		#expect(apply(pred, "a 12") == "a12")
+		#expect(apply(pred, "b16") == "b16")
+		#expect(apply(pred, "c\t\t19") == "c19")
+		#expect(apply(pred, "d25") == nil)
+	}
+}
+
+fileprivate func apply(_ predicate: some Predicate, _ src: String) -> Substring? {
+	var src = src[...]
+	return predicate.take(from: &src)
 }
