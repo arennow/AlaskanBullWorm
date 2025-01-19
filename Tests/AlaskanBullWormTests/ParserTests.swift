@@ -69,4 +69,40 @@ struct ParserTests {
 		#expect(manyP.parse(&src) == nil)
 		#expect(src == "def")
 	}
+
+	@Test
+	func asmLine() {
+		enum Instruction: String {
+			case cp, call, add
+
+			init?(rawValue: Substring) {
+				self.init(rawValue: String(rawValue))
+			}
+		}
+
+		struct Location {
+			let string: String
+			init?(string: some StringProtocol) {
+				guard ["$", "%"].contains(string.first) else { return nil }
+				self.string = String(string)
+			}
+		}
+
+		let instructionParser = .asciiLetter <*> Instruction.init(rawValue:)
+		let locationPred = CharPredicate.whitespace.drop()
+			.then(any(of: .char("$"), .char("%")))
+			.then(.visible)
+		let locationParser = locationPred <*> Location.init(string:)
+
+		var src: Substring = "cp $5 %raf"
+
+		#expect(instructionParser(&src) == Instruction.cp)
+		#expect(src == " $5 %raf")
+
+		#expect(locationParser.parse(&src)?.string == "$5")
+		#expect(src == " %raf")
+
+		#expect(locationParser.parse(&src)?.string == "%raf")
+		#expect(src.isEmpty)
+	}
 }
