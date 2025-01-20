@@ -71,6 +71,22 @@ struct ParserTests {
 	}
 
 	@Test
+	func and_simple() {
+		let parser = many1(CharPredicate.asciiLetter <&> CharPredicate.numeral)
+		var src: Substring = "abc123def456"
+		#expect(parser.parse(&src) == [["abc", "123"], ["def", "456"]])
+		#expect(src.isEmpty)
+	}
+
+	@Test
+	func and_compound() {
+		let parser = CharPredicate.asciiLetter <&> CharPredicate.numeral <&> CharPredicate.char(";")
+		var src: Substring = "abc123;def"
+		#expect(parser.parse(&src) == ["abc", "123", ";"])
+		#expect(src == "def")
+	}
+
+	@Test
 	func asmLine() {
 		enum Instruction: String {
 			case cp, call, add
