@@ -37,30 +37,30 @@ struct PredicateTests {
 	}
 
 	@Test
-	func dropThenTake_simple() {
-		var src: Substring = "abc123"
-		let pred: some Predicate = .asciiLetter.drop().then(.numeral)
-		#expect(pred.take(from: &src) == "123")
-		#expect(src == "")
-	}
+	func then() {
+		do {
+			var src: Substring = "abc"
+			#expect(CharPredicate.char("a").then(.char("b")).take(from: &src) == "ab")
+			#expect(src == "c")
+		}
 
-	@Test
-	func dropThenTake_complex() {
-		var src: Substring = "ab c def   g\t\thi "
+		do {
+			var src: Substring = "abc"
+			#expect(CharPredicate.char("a").then(.char("¿")).take(from: &src) == nil)
+			#expect(src == "abc")
+		}
 
-		#expect(CharPredicate.char("a").drop().then(.char("b"), require: .both).take(from: &src) == "b")
-		#expect(CharPredicate.whitespace.drop().then(.visible).take(from: &src) == "c")
-		#expect(CharPredicate.whitespace.take(from: &src) == " ")
-		#expect(src == "def   g\t\thi ")
+		do {
+			var src: Substring = "abc"
+			#expect(CharPredicate.char("¿").then(.char("b")).take(from: &src) == nil)
+			#expect(src == "abc")
+		}
 
-		#expect(CharPredicate.whitespace.drop().then(.visible, require: .both).take(from: &src) == nil)
-		#expect(src == "def   g\t\thi ")
-
-		#expect(CharPredicate.visible.drop().then(.char("¿")).take(from: &src) == nil)
-		#expect(src == "def   g\t\thi ")
-
-		#expect(CharPredicate.visible.drop().then(.char("¿"), require: .second).take(from: &src) == nil)
-		#expect(src == "   g\t\thi ")
+		do {
+			var src: Substring = "abc"
+			#expect(CharPredicate.char("¿").then(.char("¿")).take(from: &src) == nil)
+			#expect(src == "abc")
+		}
 	}
 
 	@Test
@@ -119,7 +119,7 @@ struct PredicateTests {
 	@Test
 	func compoundPredicate() {
 		let pred = any(of: .char("a"), .char("b"), .char("c"))
-			.then(.whitespace.drop(), require: .first)
+			.then(.whitespace.drop(allowFailures: true))
 			.then(.numeral)
 
 		#expect(apply(pred, "a 12") == "a12")
