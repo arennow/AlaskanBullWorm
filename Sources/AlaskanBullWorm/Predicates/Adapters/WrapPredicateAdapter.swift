@@ -25,8 +25,6 @@ struct WrapPredicateAdapter<Inner: Predicate>: Predicate {
 	}
 }
 
-public extension Predicate {
-	func wrapped(_ l: Character, _ r: Character) -> some Predicate {
-		WrapPredicateAdapter(inner: self, wrapperLeft: l, wrapperRight: r)
-	}
+public func wrap(_ l: Character, _ r: Character, _ inner: some Predicate) -> some Predicate {
+	WrapPredicateAdapter(inner: inner, wrapperLeft: l, wrapperRight: r)
 }

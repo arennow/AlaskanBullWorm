@@ -51,7 +51,7 @@ struct PredicateTests {
 	func wrapped_successful() {
 		var src: Substring = "[abc]def"
 
-		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == "abc")
+		#expect(wrap("[", "]", .visible).take(from: &src) == "abc")
 		#expect(src == "def")
 	}
 
@@ -59,9 +59,7 @@ struct PredicateTests {
 	func wrapped_successfulNested() {
 		var src: Substring = "[(abc)]def"
 
-		let pred = CharPredicate.visible
-			.wrapped("(", ")")
-			.wrapped("[", "]")
+		let pred = wrap("[", "]", wrap("(", ")", .visible))
 
 		#expect(pred.take(from: &src) == "abc")
 		#expect(src == "def")
@@ -71,7 +69,7 @@ struct PredicateTests {
 	func wrapped_failedInner() {
 		var src: Substring = "[a c]"
 
-		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
+		#expect(wrap("[", "]", .visible).take(from: &src) == nil)
 		#expect(src == "[a c]")
 	}
 
@@ -79,7 +77,7 @@ struct PredicateTests {
 	func wrapped_failedLeading() {
 		var src: Substring = "(abc]"
 
-		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
+		#expect(wrap("[", "]", .visible).take(from: &src) == nil)
 		#expect(src == "(abc]")
 	}
 
@@ -87,7 +85,7 @@ struct PredicateTests {
 	func wrapped_failedTrailing() {
 		var src: Substring = "[abc)"
 
-		#expect(CharPredicate.visible.wrapped("[", "]").take(from: &src) == nil)
+		#expect(wrap("[", "]", .visible).take(from: &src) == nil)
 		#expect(src == "[abc)")
 	}
 
