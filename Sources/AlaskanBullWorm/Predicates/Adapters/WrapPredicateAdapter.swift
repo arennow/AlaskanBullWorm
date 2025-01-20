@@ -1,18 +1,36 @@
 struct WrapPredicateAdapter<Inner: Predicate>: Predicate {
 	let inner: Inner
-	let wrapperLeft: Character
-	let wrapperRight: Character
+	let wrapperLeft: Character?
+	let wrapperRight: Character?
 
 	func take(from src: inout Substring) -> Substring? {
 		let before = src
 
-		guard src.first == self.wrapperLeft,
-			  let wrapperRightIndex = src.dropFirst().firstIndex(of: self.wrapperRight)
-		else { return nil }
+		if let wl = self.wrapperLeft {
+			if src.first == wl {
+				src.removeFirst()
+			} else {
+				return nil
+			}
+		}
 
-		src.removeFirst()
+		let wrapperRightIndex: Substring.Index?
+		if let wr = self.wrapperRight {
+			guard let ind = src.firstIndex(of: wr)
+			else {
+				src = before
+				return nil
+			}
+			wrapperRightIndex = ind
+		} else {
+			wrapperRightIndex = nil
+		}
 
-		var innerSrc = src[..<wrapperRightIndex]
+		var innerSrc = if let wrapperRightIndex {
+			src[..<wrapperRightIndex]
+		} else {
+			src
+		}
 		// We assume that if `innerSrc` is empty, the inner predicate matched
 		// to the end of the inner string (in addition to just not failing)
 		guard let match = self.inner.take(from: &innerSrc), innerSrc.isEmpty else {
@@ -20,11 +38,24 @@ struct WrapPredicateAdapter<Inner: Predicate>: Predicate {
 			return nil
 		}
 
-		src.removeSubrange(src.startIndex...wrapperRightIndex)
+		if let wrapperRightIndex {
+			src.removeSubrange(src.startIndex...wrapperRightIndex)
+		} else {
+			src.removeAll()
+		}
+
 		return match
 	}
 }
 
 public func wrap(_ l: Character, _ r: Character, _ inner: some Predicate) -> some Predicate {
 	WrapPredicateAdapter(inner: inner, wrapperLeft: l, wrapperRight: r)
+}
+
+public func prefix(_ p: Character, _ inner: some Predicate) -> some Predicate {
+	WrapPredicateAdapter(inner: inner, wrapperLeft: p, wrapperRight: nil)
+}
+
+public func postfix(_ p: Character, _ inner: some Predicate) -> some Predicate {
+	WrapPredicateAdapter(inner: inner, wrapperLeft: nil, wrapperRight: p)
 }

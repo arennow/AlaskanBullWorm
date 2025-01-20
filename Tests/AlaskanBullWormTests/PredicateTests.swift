@@ -74,9 +74,7 @@ struct PredicateTests {
 	@Test
 	func wrapped_successfulNested() {
 		var src: Substring = "[(abc)]def"
-
 		let pred = wrap("[", "]", wrap("(", ")", .visible))
-
 		#expect(pred.take(from: &src) == "abc")
 		#expect(src == "def")
 	}
@@ -84,7 +82,6 @@ struct PredicateTests {
 	@Test
 	func wrapped_failedInner() {
 		var src: Substring = "[a c]"
-
 		#expect(wrap("[", "]", .visible).take(from: &src) == nil)
 		#expect(src == "[a c]")
 	}
@@ -92,7 +89,6 @@ struct PredicateTests {
 	@Test
 	func wrapped_failedLeading() {
 		var src: Substring = "(abc]"
-
 		#expect(wrap("[", "]", .visible).take(from: &src) == nil)
 		#expect(src == "(abc]")
 	}
@@ -100,9 +96,36 @@ struct PredicateTests {
 	@Test
 	func wrapped_failedTrailing() {
 		var src: Substring = "[abc)"
-
 		#expect(wrap("[", "]", .visible).take(from: &src) == nil)
 		#expect(src == "[abc)")
+	}
+
+	@Test
+	func prefix_successful() {
+		var src: Substring = "|abc"
+		#expect(prefix("|", .visible).take(from: &src) == "abc")
+		#expect(src.isEmpty)
+	}
+
+	@Test
+	func prefix_failed() {
+		var src: Substring = "<abc"
+		#expect(prefix("|", .visible).take(from: &src) == nil)
+		#expect(src == "<abc")
+	}
+
+	@Test
+	func postfix_successful() {
+		var src: Substring = "abc|"
+		#expect(postfix("|", .visible).take(from: &src) == "abc")
+		#expect(src.isEmpty)
+	}
+
+	@Test
+	func postfix_failed() {
+		var src: Substring = "abc>"
+		#expect(postfix("|", .visible).take(from: &src) == nil)
+		#expect(src == "abc>")
 	}
 
 	@Test
