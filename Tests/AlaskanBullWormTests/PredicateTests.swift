@@ -23,7 +23,7 @@ struct PredicateTests {
 	@Test
 	func drop() {
 		var src: Substring = "abc123"
-		let pred: some Predicate = .asciiLetter.drop()
+		let pred: some Parser<Substring> = .asciiLetter.drop()
 		#expect(pred.parse(&src) == "")
 		#expect(src == "123")
 	}
@@ -31,7 +31,7 @@ struct PredicateTests {
 	@Test
 	func drop_includingFailures() {
 		var src: Substring = "abc123"
-		let pred: some Predicate = .whitespace.drop(allowFailures: true)
+		let pred: some Parser<Substring> = .whitespace.drop(allowFailures: true)
 		#expect(pred.parse(&src) == "")
 		#expect(src == "abc123")
 	}
@@ -130,7 +130,7 @@ struct PredicateTests {
 
 	@Test
 	func anyPredicate() {
-		let pred = any(of: .numeral, .char("x"))
+		let pred = .numeral <||> .char("x")
 
 		var src: Substring = "x123a"
 		#expect(pred.parse(&src) == "x")
@@ -141,7 +141,7 @@ struct PredicateTests {
 
 	@Test
 	func compoundPredicate() {
-		let pred = any(of: .char("a"), .char("b"), .char("c")) <+>
+		let pred = (CharPredicate.char("a") <||> CharPredicate.char("b") <||> CharPredicate.char("c")) <+>
 			.whitespace.drop(allowFailures: true) <+>
 			.numeral
 
@@ -152,7 +152,7 @@ struct PredicateTests {
 	}
 }
 
-fileprivate func apply(_ predicate: some Predicate, _ src: String) -> Substring? {
+fileprivate func apply(_ predicate: some Parser<Substring>, _ src: String) -> Substring? {
 	var src = src[...]
 	return predicate.parse(&src)
 }

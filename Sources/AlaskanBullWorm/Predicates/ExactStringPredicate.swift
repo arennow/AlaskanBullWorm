@@ -1,4 +1,4 @@
-public struct ExactStringPredicate: Predicate {
+public struct ExactStringPredicate: Parser {
 	public let needle: String
 
 	public init(_ needle: String) {

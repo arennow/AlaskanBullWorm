@@ -1,6 +1,6 @@
 import Algorithms
 
-public enum CharPredicate: Predicate {
+public enum CharPredicate: Parser {
 	case _custom((Character) -> Bool)
 	case _visible
 	case _whitespace

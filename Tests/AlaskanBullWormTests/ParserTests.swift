@@ -4,16 +4,16 @@ import Testing
 struct ParserTests {
 	@Test
 	func basicParse() {
-		let parser = .numeral <*> { Int($0) }
+		let parser = CharPredicate.numeral <*> { Int($0) }
 
 		var src: Substring = "123abc"
-		#expect(parser(&src) == 123)
+		#expect(parser.parse(&src) == 123)
 		#expect(src == "abc")
 	}
 
 	@Test
 	func failedTransformDoesntTake() {
-		let parser = .numeral <*> { _ in Optional<Int>.none }
+		let parser = CharPredicate.numeral <*> { _ in Optional<Int>.none }
 
 		var src: Substring = "123abc"
 		#expect(parser(&src) == nil)
@@ -22,7 +22,7 @@ struct ParserTests {
 
 	@Test
 	func exactStringParse() {
-		let parser = .exact("abc") <*> { String($0) }
+		let parser = ExactStringPredicate.exact("abc") <*> { String($0) }
 
 		var src: Substring = "abcdef"
 		#expect(parser(&src) == "abc")
@@ -31,9 +31,9 @@ struct ParserTests {
 
 	@Test
 	func anyParser() {
-		let exactP = .numeral <*> { Int($0) }
-		let doubleP = .char("d").drop() <+> .numeral <*> { Int($0).map { $0 * 2 } }
-		let tripleP = .char("t").drop() <+> .numeral <*> { Int($0).map { $0 * 3 } }
+		let exactP = CharPredicate.numeral <*> { Int($0) }
+		let doubleP = CharPredicate.char("d").drop() <+> .numeral <*> { Int($0).map { $0 * 2 } }
+		let tripleP = CharPredicate.char("t").drop() <+> .numeral <*> { Int($0).map { $0 * 3 } }
 		let allP = exactP <||> doubleP <||> tripleP
 
 		var src: Substring = "10d10t10"
@@ -45,7 +45,7 @@ struct ParserTests {
 
 	@Test
 	func many0Parser() {
-		let manyP = many0(.exact("abc") <*> { String($0) })
+		let manyP = many0(ExactStringPredicate.exact("abc") <*> { String($0) })
 
 		var src: Substring = "abcabcabcabc"
 		#expect(manyP.parse(&src)?.count == 4)
@@ -54,7 +54,7 @@ struct ParserTests {
 
 	@Test
 	func many1Parser_success() {
-		let manyP = many1(.exact("abc") <*> { String($0) })
+		let manyP = many1(ExactStringPredicate.exact("abc") <*> { String($0) })
 
 		var src: Substring = "abcabcabcabc"
 		#expect(manyP.parse(&src)?.count == 4)
@@ -63,7 +63,7 @@ struct ParserTests {
 
 	@Test
 	func many1Parser_failure() {
-		let manyP = many1(.exact("abc") <*> { String($0) })
+		let manyP = many1(ExactStringPredicate.exact("abc") <*> { String($0) })
 
 		var src: Substring = "def"
 		#expect(manyP.parse(&src) == nil)
@@ -91,9 +91,9 @@ struct ParserTests {
 			}
 		}
 
-		let instructionParser = .asciiLetter <*> Instruction.init(rawValue:)
+		let instructionParser = CharPredicate.asciiLetter <*> Instruction.init(rawValue:)
 		let locationPred = CharPredicate.whitespace.drop() <+>
-			any(of: .char("$"), .char("%")) <+>
+			(CharPredicate.char("$") <||> CharPredicate.char("%")) <+>
 			.visible
 		let locationParser = locationPred <*> Location.init(string:)
 

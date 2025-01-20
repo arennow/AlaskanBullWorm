@@ -1,8 +1,4 @@
-public protocol Predicate {
-	func parse(_ input: inout Substring) -> Substring?
-}
-
-public extension Predicate where Self == CharPredicate {
+public extension Parser where Self == CharPredicate {
 	static func custom(_ filter: @escaping (Character) -> Bool) -> Self { ._custom(filter) }
 	static func char(_ c: Character) -> Self { ._char(c) }
 
@@ -12,7 +8,7 @@ public extension Predicate where Self == CharPredicate {
 	static var numeral: Self { ._numeral }
 }
 
-public extension Predicate where Self == ExactStringPredicate {
+public extension Parser where Self == ExactStringPredicate {
 	static func exact(_ needle: String) -> ExactStringPredicate {
 		ExactStringPredicate(needle)
 	}

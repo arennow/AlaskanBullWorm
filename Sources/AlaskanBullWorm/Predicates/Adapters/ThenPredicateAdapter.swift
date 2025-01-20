@@ -1,4 +1,4 @@
-struct ThenPredicateAdapter<First: Predicate, Second: Predicate>: Predicate {
+struct ThenPredicateAdapter<First: Parser<Substring>, Second: Parser<Substring>>: Parser {
 	let first: First
 	let second: Second
 
@@ -18,6 +18,6 @@ struct ThenPredicateAdapter<First: Predicate, Second: Predicate>: Predicate {
 
 infix operator <+>: MultiplicationPrecedence
 
-public func <+> (lhs: some Predicate, rhs: some Predicate) -> some Predicate {
+public func <+> (lhs: some Parser<Substring>, rhs: some Parser<Substring>) -> some Parser<Substring> {
 	ThenPredicateAdapter(first: lhs, second: rhs)
 }

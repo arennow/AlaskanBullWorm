@@ -1,4 +1,4 @@
-struct DropPredicateAdapter<Inner: Predicate>: Predicate {
+struct DropPredicateAdapter<Inner: Parser>: Parser {
 	let inner: Inner
 	let allowFailures: Bool
 
@@ -11,8 +11,8 @@ struct DropPredicateAdapter<Inner: Predicate>: Predicate {
 	}
 }
 
-public extension Predicate {
-	func drop(allowFailures: Bool = false) -> some Predicate {
+public extension Parser {
+	func drop(allowFailures: Bool = false) -> some Parser<Substring> {
 		DropPredicateAdapter(inner: self, allowFailures: allowFailures)
 	}
 }
