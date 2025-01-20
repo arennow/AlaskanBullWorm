@@ -1,5 +1,5 @@
 public protocol Predicate {
-	func take(from src: inout Substring) -> Substring?
+	func parse(_ input: inout Substring) -> Substring?
 }
 
 public extension Predicate where Self == CharPredicate {

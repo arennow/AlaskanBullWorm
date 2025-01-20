@@ -3,7 +3,7 @@ struct WrapPredicateAdapter<Inner: Predicate>: Predicate {
 	let wrapperLeft: Character?
 	let wrapperRight: Character?
 
-	func take(from src: inout Substring) -> Substring? {
+	func parse(_ src: inout Substring) -> Substring? {
 		let before = src
 
 		if let wl = self.wrapperLeft {
@@ -33,7 +33,7 @@ struct WrapPredicateAdapter<Inner: Predicate>: Predicate {
 		}
 		// We assume that if `innerSrc` is empty, the inner predicate matched
 		// to the end of the inner string (in addition to just not failing)
-		guard let match = self.inner.take(from: &innerSrc), innerSrc.isEmpty else {
+		guard let match = self.inner.parse(&innerSrc), innerSrc.isEmpty else {
 			src = before
 			return nil
 		}

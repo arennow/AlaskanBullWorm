@@ -2,8 +2,8 @@ struct DropPredicateAdapter<Inner: Predicate>: Predicate {
 	let inner: Inner
 	let allowFailures: Bool
 
-	func take(from src: inout Substring) -> Substring? {
-		if self.inner.take(from: &src) != nil || self.allowFailures {
+	func parse(_ src: inout Substring) -> Substring? {
+		if self.inner.parse(&src) != nil || self.allowFailures {
 			return ""
 		} else {
 			return nil

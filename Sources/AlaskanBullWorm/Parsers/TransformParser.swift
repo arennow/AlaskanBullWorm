@@ -10,7 +10,7 @@ public struct TransformParser<Output>: Parser {
 	public func parse(_ input: inout Substring) -> Output? {
 		let before = input
 
-		let out = self.predicate.take(from: &input).flatMap(self.transform)
+		let out = self.predicate.parse(&input).flatMap(self.transform)
 		if out == nil {
 			// Just roll back
 			input = before

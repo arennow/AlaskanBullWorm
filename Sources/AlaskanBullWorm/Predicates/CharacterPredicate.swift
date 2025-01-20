@@ -19,7 +19,7 @@ public enum CharPredicate: Predicate {
 		}
 	}
 
-	public func take(from src: inout Substring) -> Substring? {
+	public func parse(_ src: inout Substring) -> Substring? {
 		var rangeEndIndex = src.startIndex
 
 		let indexSequence = chain(src.indices.dropFirst(), CollectionOfOne(src.endIndex))

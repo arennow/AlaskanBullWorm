@@ -2,11 +2,11 @@ struct ThenPredicateAdapter<First: Predicate, Second: Predicate>: Predicate {
 	let first: First
 	let second: Second
 
-	func take(from src: inout Substring) -> Substring? {
+	func parse(_ src: inout Substring) -> Substring? {
 		let beforeFirst = src
 
-		guard let firstResult = self.first.take(from: &src),
-			  let secondResult = self.second.take(from: &src)
+		guard let firstResult = self.first.parse(&src),
+			  let secondResult = self.second.parse(&src)
 		else {
 			src = beforeFirst
 			return nil

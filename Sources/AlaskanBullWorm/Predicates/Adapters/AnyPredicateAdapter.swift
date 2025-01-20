@@ -5,9 +5,9 @@ struct AnyPredicateAdapter: Predicate {
 		self.innerPredicates = innerPredicates
 	}
 
-	func take(from src: inout Substring) -> Substring? {
+	func parse(_ src: inout Substring) -> Substring? {
 		for predicate in self.innerPredicates {
-			if let out = predicate.take(from: &src) {
+			if let out = predicate.parse(&src) {
 				return out
 			}
 		}
