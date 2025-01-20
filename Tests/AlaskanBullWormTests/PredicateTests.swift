@@ -23,7 +23,7 @@ struct PredicateTests {
 	@Test
 	func drop() {
 		var src: Substring = "abc123"
-		let pred: some Parser<Substring> = .asciiLetter.drop()
+		let pred: some Parser<Substring> = CharPredicate.asciiLetter.drop()
 		#expect(pred.parse(&src) == "")
 		#expect(src == "123")
 	}
@@ -31,7 +31,7 @@ struct PredicateTests {
 	@Test
 	func drop_includingFailures() {
 		var src: Substring = "abc123"
-		let pred: some Parser<Substring> = .whitespace.drop(allowFailures: true)
+		let pred: some Parser<Substring> = CharPredicate.whitespace.drop(allowFailures: true)
 		#expect(pred.parse(&src) == "")
 		#expect(src == "abc123")
 	}
@@ -40,25 +40,25 @@ struct PredicateTests {
 	func then() {
 		do {
 			var src: Substring = "abc"
-			#expect((.char("a") <+> .char("b")).parse(&src) == "ab")
+			#expect((CharPredicate.char("a") <+> CharPredicate.char("b")).parse(&src) == "ab")
 			#expect(src == "c")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect((.char("a") <+> .char("¿")).parse(&src) == nil)
+			#expect((CharPredicate.char("a") <+> CharPredicate.char("¿")).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect((.char("¿") <+> .char("b")).parse(&src) == nil)
+			#expect((CharPredicate.char("¿") <+> CharPredicate.char("b")).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect((.char("¿") <+> .char("¿")).parse(&src) == nil)
+			#expect((CharPredicate.char("¿") <+> CharPredicate.char("¿")).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 	}
@@ -67,14 +67,14 @@ struct PredicateTests {
 	func wrapped_successful() {
 		var src: Substring = "[abc]def"
 
-		#expect(wrap("[", "]", .visible).parse(&src) == "abc")
+		#expect(wrap("[", "]", CharPredicate.visible).parse(&src) == "abc")
 		#expect(src == "def")
 	}
 
 	@Test
 	func wrapped_successfulNested() {
 		var src: Substring = "[(abc)]def"
-		let pred = wrap("[", "]", wrap("(", ")", .visible))
+		let pred = wrap("[", "]", wrap("(", ")", CharPredicate.visible))
 		#expect(pred.parse(&src) == "abc")
 		#expect(src == "def")
 	}
@@ -82,55 +82,55 @@ struct PredicateTests {
 	@Test
 	func wrapped_failedInner() {
 		var src: Substring = "[a c]"
-		#expect(wrap("[", "]", .visible).parse(&src) == nil)
+		#expect(wrap("[", "]", CharPredicate.visible).parse(&src) == nil)
 		#expect(src == "[a c]")
 	}
 
 	@Test
 	func wrapped_failedLeading() {
 		var src: Substring = "(abc]"
-		#expect(wrap("[", "]", .visible).parse(&src) == nil)
+		#expect(wrap("[", "]", CharPredicate.visible).parse(&src) == nil)
 		#expect(src == "(abc]")
 	}
 
 	@Test
 	func wrapped_failedTrailing() {
 		var src: Substring = "[abc)"
-		#expect(wrap("[", "]", .visible).parse(&src) == nil)
+		#expect(wrap("[", "]", CharPredicate.visible).parse(&src) == nil)
 		#expect(src == "[abc)")
 	}
 
 	@Test
 	func prefix_successful() {
 		var src: Substring = "|abc"
-		#expect(prefix("|", .visible).parse(&src) == "abc")
+		#expect(prefix("|", CharPredicate.visible).parse(&src) == "abc")
 		#expect(src.isEmpty)
 	}
 
 	@Test
 	func prefix_failed() {
 		var src: Substring = "<abc"
-		#expect(prefix("|", .visible).parse(&src) == nil)
+		#expect(prefix("|", CharPredicate.visible).parse(&src) == nil)
 		#expect(src == "<abc")
 	}
 
 	@Test
 	func postfix_successful() {
 		var src: Substring = "abc|"
-		#expect(postfix("|", .visible).parse(&src) == "abc")
+		#expect(postfix("|", CharPredicate.visible).parse(&src) == "abc")
 		#expect(src.isEmpty)
 	}
 
 	@Test
 	func postfix_failed() {
 		var src: Substring = "abc>"
-		#expect(postfix("|", .visible).parse(&src) == nil)
+		#expect(postfix("|", CharPredicate.visible).parse(&src) == nil)
 		#expect(src == "abc>")
 	}
 
 	@Test
 	func anyPredicate() {
-		let pred = .numeral <||> .char("x")
+		let pred = CharPredicate.numeral <||> CharPredicate.char("x")
 
 		var src: Substring = "x123a"
 		#expect(pred.parse(&src) == "x")
@@ -142,8 +142,8 @@ struct PredicateTests {
 	@Test
 	func compoundPredicate() {
 		let pred = (CharPredicate.char("a") <||> CharPredicate.char("b") <||> CharPredicate.char("c")) <+>
-			.whitespace.drop(allowFailures: true) <+>
-			.numeral
+			CharPredicate.whitespace.drop(allowFailures: true) <+>
+			CharPredicate.numeral
 
 		#expect(apply(pred, "a 12") == "a12")
 		#expect(apply(pred, "b16") == "b16")

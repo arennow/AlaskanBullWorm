@@ -22,7 +22,7 @@ struct ParserTests {
 
 	@Test
 	func exactStringParse() {
-		let parser = ExactStringPredicate.exact("abc") <*> { String($0) }
+		let parser = ExactStringPredicate("abc") <*> { String($0) }
 
 		var src: Substring = "abcdef"
 		#expect(parser(&src) == "abc")
@@ -32,8 +32,8 @@ struct ParserTests {
 	@Test
 	func anyParser() {
 		let exactP = CharPredicate.numeral <*> { Int($0) }
-		let doubleP = CharPredicate.char("d").drop() <+> .numeral <*> { Int($0).map { $0 * 2 } }
-		let tripleP = CharPredicate.char("t").drop() <+> .numeral <*> { Int($0).map { $0 * 3 } }
+		let doubleP = CharPredicate.char("d").drop() <+> CharPredicate.numeral <*> { Int($0).map { $0 * 2 } }
+		let tripleP = CharPredicate.char("t").drop() <+> CharPredicate.numeral <*> { Int($0).map { $0 * 3 } }
 		let allP = exactP <||> doubleP <||> tripleP
 
 		var src: Substring = "10d10t10"
@@ -45,7 +45,7 @@ struct ParserTests {
 
 	@Test
 	func many0Parser() {
-		let manyP = many0(ExactStringPredicate.exact("abc") <*> { String($0) })
+		let manyP = many0(ExactStringPredicate("abc") <*> { String($0) })
 
 		var src: Substring = "abcabcabcabc"
 		#expect(manyP.parse(&src)?.count == 4)
@@ -54,7 +54,7 @@ struct ParserTests {
 
 	@Test
 	func many1Parser_success() {
-		let manyP = many1(ExactStringPredicate.exact("abc") <*> { String($0) })
+		let manyP = many1(ExactStringPredicate("abc") <*> { String($0) })
 
 		var src: Substring = "abcabcabcabc"
 		#expect(manyP.parse(&src)?.count == 4)
@@ -63,7 +63,7 @@ struct ParserTests {
 
 	@Test
 	func many1Parser_failure() {
-		let manyP = many1(ExactStringPredicate.exact("abc") <*> { String($0) })
+		let manyP = many1(ExactStringPredicate("abc") <*> { String($0) })
 
 		var src: Substring = "def"
 		#expect(manyP.parse(&src) == nil)
@@ -94,7 +94,7 @@ struct ParserTests {
 		let instructionParser = CharPredicate.asciiLetter <*> Instruction.init(rawValue:)
 		let locationPred = CharPredicate.whitespace.drop() <+>
 			(CharPredicate.char("$") <||> CharPredicate.char("%")) <+>
-			.visible
+			CharPredicate.visible
 		let locationParser = locationPred <*> Location.init(string:)
 
 		var src: Substring = "cp $5 %raf"

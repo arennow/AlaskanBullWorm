@@ -1,21 +1,21 @@
 import Algorithms
 
 public enum CharPredicate: Parser {
-	case _custom((Character) -> Bool)
-	case _visible
-	case _whitespace
-	case _asciiLetter
-	case _numeral
-	case _char(Character)
+	case custom((Character) -> Bool)
+	case visible
+	case whitespace
+	case asciiLetter
+	case numeral
+	case char(Character)
 
 	private var rawPredicate: (Character) -> Bool {
 		switch self {
-			case ._custom(let p): p
-			case ._visible: !\.isWhitespace
-			case ._whitespace: \.isWhitespace
-			case ._asciiLetter: \.isASCII && \.isLetter
-			case ._numeral: \.isWholeNumber
-			case ._char(let c): { $0 == c }
+			case .custom(let p): p
+			case .visible: !\.isWhitespace
+			case .whitespace: \.isWhitespace
+			case .asciiLetter: \.isASCII && \.isLetter
+			case .numeral: \.isWholeNumber
+			case .char(let c): { $0 == c }
 		}
 	}
 
