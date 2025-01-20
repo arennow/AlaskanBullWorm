@@ -40,25 +40,25 @@ struct PredicateTests {
 	func then() {
 		do {
 			var src: Substring = "abc"
-			#expect(CharPredicate.char("a").then(.char("b")).take(from: &src) == "ab")
+			#expect((.char("a") <+> .char("b")).take(from: &src) == "ab")
 			#expect(src == "c")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect(CharPredicate.char("a").then(.char("¿")).take(from: &src) == nil)
+			#expect((.char("a") <+> .char("¿")).take(from: &src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect(CharPredicate.char("¿").then(.char("b")).take(from: &src) == nil)
+			#expect((.char("¿") <+> .char("b")).take(from: &src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect(CharPredicate.char("¿").then(.char("¿")).take(from: &src) == nil)
+			#expect((.char("¿") <+> .char("¿")).take(from: &src) == nil)
 			#expect(src == "abc")
 		}
 	}
@@ -118,9 +118,9 @@ struct PredicateTests {
 
 	@Test
 	func compoundPredicate() {
-		let pred = any(of: .char("a"), .char("b"), .char("c"))
-			.then(.whitespace.drop(allowFailures: true))
-			.then(.numeral)
+		let pred = any(of: .char("a"), .char("b"), .char("c")) <+>
+			.whitespace.drop(allowFailures: true) <+>
+			.numeral
 
 		#expect(apply(pred, "a 12") == "a12")
 		#expect(apply(pred, "b16") == "b16")

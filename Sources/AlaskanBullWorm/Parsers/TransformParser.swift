@@ -23,7 +23,7 @@ public struct TransformParser<Output>: Parser {
 	}
 }
 
-infix operator <*>
+infix operator <*>: AdditionPrecedence
 
 public func <*> <T>(lhs: Predicate, rhs: @escaping Transform<T>) -> TransformParser<T> {
 	.init(predicate: lhs, transform: rhs)

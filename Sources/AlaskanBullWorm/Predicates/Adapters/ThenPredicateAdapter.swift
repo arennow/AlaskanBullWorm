@@ -16,8 +16,8 @@ struct ThenPredicateAdapter<First: Predicate, Second: Predicate>: Predicate {
 	}
 }
 
-public extension Predicate {
-	func then(_ second: some Predicate) -> some Predicate {
-		ThenPredicateAdapter(first: self, second: second)
-	}
+infix operator <+>: MultiplicationPrecedence
+
+public func <+> (lhs: some Predicate, rhs: some Predicate) -> some Predicate {
+	ThenPredicateAdapter(first: lhs, second: rhs)
 }

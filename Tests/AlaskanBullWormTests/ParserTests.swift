@@ -32,8 +32,8 @@ struct ParserTests {
 	@Test
 	func anyParser() {
 		let exactP = .numeral <*> { Int($0) }
-		let doubleP = .char("d").drop().then(.numeral) <*> { Int($0).map { $0 * 2 } }
-		let tripleP = .char("t").drop().then(.numeral) <*> { Int($0).map { $0 * 3 } }
+		let doubleP = .char("d").drop() <+> .numeral <*> { Int($0).map { $0 * 2 } }
+		let tripleP = .char("t").drop() <+> .numeral <*> { Int($0).map { $0 * 3 } }
 		let allP = exactP <||> doubleP <||> tripleP
 
 		var src: Substring = "10d10t10"
@@ -92,9 +92,9 @@ struct ParserTests {
 		}
 
 		let instructionParser = .asciiLetter <*> Instruction.init(rawValue:)
-		let locationPred = CharPredicate.whitespace.drop()
-			.then(any(of: .char("$"), .char("%")))
-			.then(.visible)
+		let locationPred = CharPredicate.whitespace.drop() <+>
+			any(of: .char("$"), .char("%")) <+>
+			.visible
 		let locationParser = locationPred <*> Location.init(string:)
 
 		var src: Substring = "cp $5 %raf"
