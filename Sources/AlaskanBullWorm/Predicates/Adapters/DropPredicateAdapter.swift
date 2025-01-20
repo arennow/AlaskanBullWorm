@@ -1,8 +1,9 @@
 struct DropPredicateAdapter<Inner: Predicate>: Predicate {
 	let inner: Inner
+	let allowFailures: Bool
 
 	func take(from src: inout Substring) -> Substring? {
-		if self.inner.take(from: &src) != nil {
+		if self.inner.take(from: &src) != nil || self.allowFailures {
 			return ""
 		} else {
 			return nil
@@ -11,7 +12,7 @@ struct DropPredicateAdapter<Inner: Predicate>: Predicate {
 }
 
 public extension Predicate {
-	func drop() -> some Predicate {
-		DropPredicateAdapter(inner: self)
+	func drop(allowFailures: Bool = false) -> some Predicate {
+		DropPredicateAdapter(inner: self, allowFailures: allowFailures)
 	}
 }

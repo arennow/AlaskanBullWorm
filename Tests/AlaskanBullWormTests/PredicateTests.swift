@@ -21,6 +21,22 @@ struct PredicateTests {
 	}
 
 	@Test
+	func drop() {
+		var src: Substring = "abc123"
+		let pred: some Predicate = .asciiLetter.drop()
+		#expect(pred.take(from: &src) == "")
+		#expect(src == "123")
+	}
+
+	@Test
+	func drop_includingFailures() {
+		var src: Substring = "abc123"
+		let pred: some Predicate = .whitespace.drop(allowFailures: true)
+		#expect(pred.take(from: &src) == "")
+		#expect(src == "abc123")
+	}
+
+	@Test
 	func dropThenTake_simple() {
 		var src: Substring = "abc123"
 		let pred: some Predicate = .asciiLetter.drop().then(.numeral)
