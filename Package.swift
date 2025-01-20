@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -21,7 +21,13 @@ let package = Package(name: "AlaskanBullWorm",
 					  	.target(name: "AlaskanBullWorm",
 								  dependencies: [
 								  	.product(name: "Algorithms", package: "swift-algorithms"),
+								  ],
+								  swiftSettings: [
+								  	.enableUpcomingFeature("ExistentialAny"),
 								  ]),
 					  	.testTarget(name: "AlaskanBullWormTests",
-									  dependencies: ["AlaskanBullWorm"]),
+									  dependencies: ["AlaskanBullWorm"],
+									  swiftSettings: [
+									  	.enableUpcomingFeature("ExistentialAny"),
+									  ]),
 					  ])
