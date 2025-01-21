@@ -1,9 +1,9 @@
-struct WrapPredicateAdapter<Inner: Parser<Substring>>: Parser {
+struct WrapPredicateAdapter<Inner: Parser>: Parser {
 	let inner: Inner
 	let wrapperLeft: Character?
 	let wrapperRight: Character?
 
-	func parse(_ src: inout Substring) -> Substring? {
+	func parse(_ src: inout Substring) -> Inner.Output? {
 		let before = src
 
 		if let wl = self.wrapperLeft {
@@ -48,14 +48,14 @@ struct WrapPredicateAdapter<Inner: Parser<Substring>>: Parser {
 	}
 }
 
-public func wrap(_ l: Character, _ r: Character, _ inner: some Parser<Substring>) -> some Parser<Substring> {
+public func wrap<T>(_ l: Character, _ r: Character, _ inner: some Parser<T>) -> some Parser<T> {
 	WrapPredicateAdapter(inner: inner, wrapperLeft: l, wrapperRight: r)
 }
 
-public func prefix(_ p: Character, _ inner: some Parser<Substring>) -> some Parser<Substring> {
+public func prefix<T>(_ p: Character, _ inner: some Parser<T>) -> some Parser<T> {
 	WrapPredicateAdapter(inner: inner, wrapperLeft: p, wrapperRight: nil)
 }
 
-public func postfix(_ p: Character, _ inner: some Parser<Substring>) -> some Parser<Substring> {
+public func postfix<T>(_ p: Character, _ inner: some Parser<T>) -> some Parser<T> {
 	WrapPredicateAdapter(inner: inner, wrapperLeft: nil, wrapperRight: p)
 }
