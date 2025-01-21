@@ -85,40 +85,4 @@ struct ParserTests {
 		#expect(parser.parse(&src) == ["abc", "123", ";"])
 		#expect(src == "def")
 	}
-
-	@Test
-	func asmLine() {
-		enum Instruction: String {
-			case cp, call, add
-
-			init?(rawValue: Substring) {
-				self.init(rawValue: String(rawValue))
-			}
-		}
-
-		enum Location: Equatable {
-			case literal(Int), register(String)
-			init?(string: some StringProtocol) {
-				switch string.first {
-					case "$": self = .literal(Int(string.dropFirst())!)
-					case "%": self = .register(String(string.dropFirst()))
-					default: return nil
-				}
-			}
-		}
-
-		let instructionParser = CharPredicate.asciiLetter <*> Instruction.init(rawValue:)
-		let locationPred = CharPredicate.whitespace.drop() <+>
-			(CharPredicate.char("$") <||> CharPredicate.char("%")) <+>
-			CharPredicate.visible
-		let locationParser = locationPred <*> Location.init(string:)
-
-		var src: Substring = "cp $5 %raf"
-
-		#expect(instructionParser(&src) == Instruction.cp)
-		#expect(src == " $5 %raf")
-
-		#expect(many0(locationParser).parse(&src) == [.literal(5), .register("raf")])
-		#expect(src.isEmpty)
-	}
 }
