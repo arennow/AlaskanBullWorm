@@ -1,8 +1,8 @@
-public struct TransformParser<Output>: Parser {
-	public let predicate: any Parser<Substring>
-	public let transform: Transform<Output>
+public struct TransformParser<Input, Output>: Parser {
+	public let predicate: any Parser<Input>
+	public let transform: (Input) -> Output?
 
-	public init(predicate: any Parser<Substring>, transform: @escaping Transform<Output>) {
+	public init(predicate: any Parser<Input>, transform: @escaping (Input) -> Output?) {
 		self.predicate = predicate
 		self.transform = transform
 	}
@@ -25,6 +25,6 @@ public struct TransformParser<Output>: Parser {
 
 infix operator <*>: AdditionPrecedence
 
-public func <*> <T>(lhs: any Parser<Substring>, rhs: @escaping Transform<T>) -> TransformParser<T> {
+public func <*> <I, O>(lhs: any Parser<I>, rhs: @escaping (I) -> O?) -> TransformParser<I, O> {
 	.init(predicate: lhs, transform: rhs)
 }
