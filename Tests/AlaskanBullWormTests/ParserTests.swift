@@ -73,9 +73,9 @@ struct ParserTests {
 	@Test
 	func and_simple() {
 		let parser = many1(CharPredicate.asciiLetter <&> CharPredicate.numeral)
-		var src: Substring = "abc123def456"
+		var src: Substring = "abc123def456¿"
 		#expect(parser.parse(&src) == [["abc", "123"], ["def", "456"]])
-		#expect(src.isEmpty)
+		#expect(src == "¿")
 	}
 
 	@Test
