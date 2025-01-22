@@ -17,3 +17,16 @@ public enum CharacterPredicate: IntoPredicate {
 		}
 	}
 }
+
+public func char(_ pred: CharacterPredicate) -> some Parser<Substring> {
+	InlineParser { input in
+		guard let first = input.first else { return nil }
+		if pred.into()(first) {
+			let out = input[..<input.index(after: input.startIndex)]
+			input.removeFirst()
+			return out
+		} else {
+			return nil
+		}
+	}
+}

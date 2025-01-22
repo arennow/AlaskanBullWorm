@@ -80,9 +80,18 @@ struct ParserTests {
 
 	@Test
 	func and_compound() {
-		let parser = many1(.asciiLetter) <&> many1(.numeral) <&> many1(.char(";"))
+		let parser = many1(.asciiLetter) <&> many1(.numeral) <&> char(.char(";"))
 		var src: Substring = "abc123;def"
 		#expect(parser.parse(&src) == ["abc", "123", ";"])
 		#expect(src == "def")
+	}
+
+	@Test
+	func char_success() {
+		var src: Substring = "a1b2"
+		#expect(char(.asciiLetter).parse(&src) == "a")
+		#expect(src == "1b2")
+		#expect(char(.asciiLetter).parse(&src) == nil)
+		#expect(src == "1b2")
 	}
 }
