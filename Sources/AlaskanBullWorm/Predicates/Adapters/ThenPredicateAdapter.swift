@@ -13,3 +13,10 @@ public func <+> <T>(lhs: some Parser<Void>, rhs: some Parser<T>) -> some Parser<
 		return r
 	}
 }
+
+public func <+> <T>(lhs: some Parser<T>, rhs: some Parser<Void>) -> some Parser<T> {
+	InlineParser { src in
+		guard let (l, _) = checkPair(&src, lhs, rhs) else { return nil }
+		return l
+	}
+}

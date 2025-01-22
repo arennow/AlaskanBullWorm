@@ -1,8 +1,8 @@
 public extension Parser {
-	func drop<O>(allowFailures: Bool = true, replacement: O = Substring()) -> some Parser<O> {
+	func drop(allowFailures: Bool = true) -> some Parser<Void> {
 		InlineParser { input in
 			if self.parse(&input) != nil || allowFailures {
-				return replacement
+				return ()
 			} else {
 				return nil
 			}

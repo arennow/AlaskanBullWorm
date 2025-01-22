@@ -24,7 +24,7 @@ struct PredicateTests {
 	func drop_success() {
 		var src: Substring = "abc123"
 		let pred = CharPredicate.asciiLetter.drop()
-		#expect(pred.parse(&src) == "")
+		#expect(pred.parse(&src) != nil)
 		#expect(src == "123")
 	}
 
@@ -32,7 +32,7 @@ struct PredicateTests {
 	func drop_allowFailures() {
 		var src: Substring = "abc123"
 		let pred = CharPredicate.whitespace.drop(allowFailures: true)
-		#expect(pred.parse(&src) == "")
+		#expect(pred.parse(&src) != nil)
 		#expect(src == "abc123")
 	}
 
