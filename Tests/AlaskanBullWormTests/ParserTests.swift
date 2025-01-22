@@ -22,7 +22,7 @@ struct ParserTests {
 
 	@Test
 	func exactStringParse() {
-		let parser = ExactStringPredicate("abc") <*> { String($0) }
+		let parser = exact("abc") <*> { String($0) }
 
 		var src: Substring = "abcdef"
 		#expect(parser.parse(&src) == "abc")
@@ -45,7 +45,7 @@ struct ParserTests {
 
 	@Test
 	func many0Parser() {
-		let manyP = many0(ExactStringPredicate("abc") <*> { String($0) })
+		let manyP = many0(exact("abc") <*> { String($0) })
 
 		var src: Substring = "abcabcabcabc"
 		#expect(manyP.parse(&src)?.count == 4)
@@ -54,7 +54,7 @@ struct ParserTests {
 
 	@Test
 	func many1Parser_success() {
-		let manyP = many1(ExactStringPredicate("abc") <*> { String($0) })
+		let manyP = many1(exact("abc") <*> { String($0) })
 
 		var src: Substring = "abcabcabcabc"
 		#expect(manyP.parse(&src)?.count == 4)
@@ -63,7 +63,7 @@ struct ParserTests {
 
 	@Test
 	func many1Parser_failure() {
-		let manyP = many1(ExactStringPredicate("abc") <*> { String($0) })
+		let manyP = many1(exact("abc") <*> { String($0) })
 
 		var src: Substring = "def"
 		#expect(manyP.parse(&src) == nil)

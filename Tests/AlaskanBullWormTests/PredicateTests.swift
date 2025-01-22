@@ -16,7 +16,7 @@ struct PredicateTests {
 	@Test
 	func takeExactString() {
 		var src: Substring = "abcdef"
-		#expect(ExactStringPredicate("abc").parse(&src) == "abc")
+		#expect(exact("abc").parse(&src) == "abc")
 		#expect(src == "def")
 	}
 
