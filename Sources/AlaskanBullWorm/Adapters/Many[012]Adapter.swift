@@ -17,3 +17,7 @@ fileprivate func manyN<T>(n: Int, _ inner: some Parser<T>) -> some Parser<Array<
 		return zeroOut
 	}
 }
+
+public func many1(_ charPred: CharacterPredicate) -> some Parser<Substring> {
+	RepeatedPredicateParser(charPred)
+}

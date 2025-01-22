@@ -4,7 +4,7 @@ import Testing
 struct ParserTests {
 	@Test
 	func basicParse() {
-		let parser = CharPredicate.numeral <*> { Int($0) }
+		let parser = many1(.numeral) <*> { Int($0) }
 
 		var src: Substring = "123abc"
 		#expect(parser.parse(&src) == 123)
@@ -13,7 +13,7 @@ struct ParserTests {
 
 	@Test
 	func failedTransformDoesntTake() {
-		let parser = CharPredicate.numeral <*> { _ in Optional<Int>.none }
+		let parser = many1(.numeral) <*> { _ in Optional<Int>.none }
 
 		var src: Substring = "123abc"
 		#expect(parser.parse(&src) == nil)
@@ -31,9 +31,9 @@ struct ParserTests {
 
 	@Test
 	func anyParser() {
-		let exactP = CharPredicate.numeral <*> { Int($0) }
-		let doubleP = CharPredicate.char("d").drop(allowFailures: false) <+> CharPredicate.numeral <*> { Int($0).map { $0 * 2 } }
-		let tripleP = CharPredicate.char("t").drop(allowFailures: false) <+> CharPredicate.numeral <*> { Int($0).map { $0 * 3 } }
+		let exactP = many1(.numeral) <*> { Int($0) }
+		let doubleP = many1(.char("d")).drop(allowFailures: false) <+> many1(.numeral) <*> { Int($0).map { $0 * 2 } }
+		let tripleP = many1(.char("t")).drop(allowFailures: false) <+> many1(.numeral) <*> { Int($0).map { $0 * 3 } }
 		let allP = exactP <||> doubleP <||> tripleP
 
 		var src: Substring = "10d10t10"
@@ -72,7 +72,7 @@ struct ParserTests {
 
 	@Test
 	func and_simple() {
-		let parser = many1(CharPredicate.asciiLetter <&> CharPredicate.numeral)
+		let parser = many1(many1(.asciiLetter) <&> many1(.numeral))
 		var src: Substring = "abc123def456¿"
 		#expect(parser.parse(&src) == [["abc", "123"], ["def", "456"]])
 		#expect(src == "¿")
@@ -80,7 +80,7 @@ struct ParserTests {
 
 	@Test
 	func and_compound() {
-		let parser = CharPredicate.asciiLetter <&> CharPredicate.numeral <&> CharPredicate.char(";")
+		let parser = many1(.asciiLetter) <&> many1(.numeral) <&> many1(.char(";"))
 		var src: Substring = "abc123;def"
 		#expect(parser.parse(&src) == ["abc", "123", ";"])
 		#expect(src == "def")
