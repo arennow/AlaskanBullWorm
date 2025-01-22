@@ -1,35 +1,16 @@
-public struct Many0Adapter<Output>: Parser {
-	let innerParser: any Parser<Output>
-
-	public init(_ innerParser: any Parser<Output>) {
-		self.innerParser = innerParser
-	}
-
-	public func parse(_ input: inout Substring) -> Array<Output>? {
+public func many0<T>(_ inner: some Parser<T>) -> some Parser<Array<T>> {
+	InlineParser { input in
 		(0...).mapUntilNil { _ in
-			self.innerParser.parse(&input)
+			inner.parse(&input)
 		}
 	}
 }
 
-public struct Many1Adapter<Output>: Parser {
-	let innerParser: any Parser<Output>
-
-	public init(_ innerParser: any Parser<Output>) {
-		self.innerParser = innerParser
-	}
-
-	public func parse(_ input: inout Substring) -> Array<Output>? {
-		let before = input
-		guard let zeroOut = Many0Adapter(self.innerParser).parse(&input),
+public func many1<T>(_ inner: some Parser<T>) -> some Parser<Array<T>> {
+	InlineParser { input in
+		guard let zeroOut = many0(inner).parse(&input),
 			  !zeroOut.isEmpty
-		else {
-			input = before
-			return nil
-		}
+		else { return nil }
 		return zeroOut
 	}
 }
-
-public typealias many0<T> = Many0Adapter<T>
-public typealias many1<T> = Many1Adapter<T>
