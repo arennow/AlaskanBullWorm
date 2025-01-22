@@ -1,4 +1,4 @@
-public struct Many0Parser<Output>: Parser {
+public struct Many0Adapter<Output>: Parser {
 	let innerParser: any Parser<Output>
 
 	public init(_ innerParser: any Parser<Output>) {
@@ -12,7 +12,7 @@ public struct Many0Parser<Output>: Parser {
 	}
 }
 
-public struct Many1Parser<Output>: Parser {
+public struct Many1Adapter<Output>: Parser {
 	let innerParser: any Parser<Output>
 
 	public init(_ innerParser: any Parser<Output>) {
@@ -21,7 +21,7 @@ public struct Many1Parser<Output>: Parser {
 
 	public func parse(_ input: inout Substring) -> Array<Output>? {
 		let before = input
-		guard let zeroOut = Many0Parser(self.innerParser).parse(&input),
+		guard let zeroOut = Many0Adapter(self.innerParser).parse(&input),
 			  !zeroOut.isEmpty
 		else {
 			input = before
@@ -31,19 +31,5 @@ public struct Many1Parser<Output>: Parser {
 	}
 }
 
-public typealias many0<T> = Many0Parser<T>
-public typealias many1<T> = Many1Parser<T>
-
-extension Sequence {
-	func mapUntilNil<T, E: Error>(_ transform: (Element) throws(E) -> T?) throws(E) -> Array<T> {
-		var outArr = Array<T>()
-		for element in self {
-			if let new = try transform(element) {
-				outArr.append(new)
-			} else {
-				break
-			}
-		}
-		return outArr
-	}
-}
+public typealias many0<T> = Many0Adapter<T>
+public typealias many1<T> = Many1Adapter<T>

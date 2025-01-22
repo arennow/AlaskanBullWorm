@@ -1,3 +1,9 @@
+public protocol Parser<Output> {
+	associatedtype Output
+
+	func parse(_ input: inout Substring) -> Output?
+}
+
 public extension Parser {
 	func drop(allowFailures: Bool = true) -> some Parser<Void> {
 		InlineParser { input in
