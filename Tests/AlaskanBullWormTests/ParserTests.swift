@@ -16,7 +16,7 @@ struct ParserTests {
 		let parser = CharPredicate.numeral <*> { _ in Optional<Int>.none }
 
 		var src: Substring = "123abc"
-		#expect(parser(&src) == nil)
+		#expect(parser.parse(&src) == nil)
 		#expect(src == "123abc")
 	}
 
@@ -25,7 +25,7 @@ struct ParserTests {
 		let parser = ExactStringPredicate("abc") <*> { String($0) }
 
 		var src: Substring = "abcdef"
-		#expect(parser(&src) == "abc")
+		#expect(parser.parse(&src) == "abc")
 		#expect(src == "def")
 	}
 

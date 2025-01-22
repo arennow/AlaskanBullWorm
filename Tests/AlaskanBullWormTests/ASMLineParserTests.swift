@@ -21,7 +21,7 @@ struct ASMLineParserTests {
 
 		var src: Substring = "cp $5 [%raf, $7]"
 
-		#expect(instructionParser(&src) == Instruction.cp)
+		#expect(instructionParser.parse(&src) == Instruction.cp)
 		#expect(src == " $5 [%raf, $7]")
 
 		#expect(many0(locationParser).parse(&src) == [.literal(5), .relative])
