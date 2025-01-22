@@ -32,8 +32,8 @@ struct ParserTests {
 	@Test
 	func anyParser() {
 		let exactP = many1(.numeral) <*> { Int($0) }
-		let doubleP = many1(.char("d")).drop(allowFailures: false) <+> many1(.numeral) <*> { Int($0).map { $0 * 2 } }
-		let tripleP = many1(.char("t")).drop(allowFailures: false) <+> many1(.numeral) <*> { Int($0).map { $0 * 3 } }
+		let doubleP = char(.exact("d")).drop(allowFailures: false) <+> many1(.numeral) <*> { Int($0).map { $0 * 2 } }
+		let tripleP = char(.exact("t")).drop(allowFailures: false) <+> many1(.numeral) <*> { Int($0).map { $0 * 3 } }
 		let allP = exactP <||> doubleP <||> tripleP
 
 		var src: Substring = "10d10t10"
@@ -80,7 +80,7 @@ struct ParserTests {
 
 	@Test
 	func and_compound() {
-		let parser = many1(.asciiLetter) <&> many1(.numeral) <&> char(.char(";"))
+		let parser = many1(.asciiLetter) <&> many1(.numeral) <&> char(.exact(";"))
 		var src: Substring = "abc123;def"
 		#expect(parser.parse(&src) == ["abc", "123", ";"])
 		#expect(src == "def")

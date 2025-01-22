@@ -48,25 +48,25 @@ struct PredicateTests {
 	func then() {
 		do {
 			var src: Substring = "abc"
-			#expect((many1(.char("a")) <+> many1(.char("b"))).parse(&src) == "ab")
+			#expect((char(.exact("a")) <+> char(.exact("b"))).parse(&src) == "ab")
 			#expect(src == "c")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect((many1(.char("a")) <+> many1(.char("¿"))).parse(&src) == nil)
+			#expect((char(.exact("a")) <+> char(.exact("¿"))).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect((many1(.char("¿")) <+> many1(.char("b"))).parse(&src) == nil)
+			#expect((char(.exact("¿")) <+> char(.exact("b"))).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect((many1(.char("¿")) <+> many1(.char("¿"))).parse(&src) == nil)
+			#expect((char(.exact("¿")) <+> char(.exact("¿"))).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 	}
@@ -138,7 +138,7 @@ struct PredicateTests {
 
 	@Test
 	func anyPredicate() {
-		let pred = many1(.numeral) <||> many1(.char("x"))
+		let pred = many1(.numeral) <||> char(.exact("x"))
 
 		var src: Substring = "x123a"
 		#expect(pred.parse(&src) == "x")
@@ -149,7 +149,7 @@ struct PredicateTests {
 
 	@Test
 	func compoundPredicate() {
-		let pred = (many1(.char("a")) <||> many1(.char("b")) <||> many1(.char("c"))) <+>
+		let pred = (char(.exact("a")) <||> char(.exact("b")) <||> char(.exact("c"))) <+>
 			many1(.whitespace).drop() <+>
 			many1(.numeral)
 

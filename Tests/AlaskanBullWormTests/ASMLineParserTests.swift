@@ -6,7 +6,7 @@ struct ASMLineParserTests {
 	func asmLine() {
 		let instructionParser = many1(.asciiLetter) <*> Instruction.init(rawValue:)
 		let coreLocationPred = many1(.whitespace).drop() <+>
-			(many1(.char("$")) <||> many1(.char("%"))) <+>
+			(char(.exact("$")) <||> char(.exact("%"))) <+>
 			many1(.visible)
 		let coreLocationParser = coreLocationPred <*> Location.init(string:)
 
