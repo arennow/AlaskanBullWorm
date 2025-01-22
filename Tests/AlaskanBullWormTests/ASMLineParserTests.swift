@@ -5,15 +5,15 @@ struct ASMLineParserTests {
 	@Test
 	func asmLine() {
 		let instructionParser = CharPredicate.asciiLetter <*> Instruction.init(rawValue:)
-		let coreLocationPred = CharPredicate.whitespace.drop(allowFailures: true) <+>
+		let coreLocationPred = CharPredicate.whitespace.drop() <+>
 			(CharPredicate.char("$") <||> CharPredicate.char("%")) <+>
 			CharPredicate.visible
 		let coreLocationParser = coreLocationPred <*> Location.init(string:)
 
 		let innerRelativeLocationPred = postfix(",", coreLocationPred) <&>
-			CharPredicate.whitespace.drop(allowFailures: true) <+>
+			CharPredicate.whitespace.drop() <+>
 			coreLocationPred
-		let relativeLocationPred = CharPredicate.whitespace.drop(allowFailures: true, replacement: ()) <+> wrap("[", "]", innerRelativeLocationPred)
+		let relativeLocationPred = CharPredicate.whitespace.drop(replacement: ()) <+> wrap("[", "]", innerRelativeLocationPred)
 
 		let relativeLocationParser = relativeLocationPred <*> Location.init(array:)
 

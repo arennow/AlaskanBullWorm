@@ -21,18 +21,26 @@ struct PredicateTests {
 	}
 
 	@Test
-	func drop() {
+	func drop_success() {
 		var src: Substring = "abc123"
-		let pred: some Parser<Substring> = CharPredicate.asciiLetter.drop()
+		let pred = CharPredicate.asciiLetter.drop()
 		#expect(pred.parse(&src) == "")
 		#expect(src == "123")
 	}
 
 	@Test
-	func drop_includingFailures() {
+	func drop_allowFailures() {
 		var src: Substring = "abc123"
-		let pred: some Parser<Substring> = CharPredicate.whitespace.drop(allowFailures: true)
+		let pred = CharPredicate.whitespace.drop(allowFailures: true)
 		#expect(pred.parse(&src) == "")
+		#expect(src == "abc123")
+	}
+
+	@Test
+	func drop_disallowFailures() {
+		var src: Substring = "abc123"
+		let pred = CharPredicate.whitespace.drop(allowFailures: false)
+		#expect(pred.parse(&src) == nil)
 		#expect(src == "abc123")
 	}
 
@@ -142,7 +150,7 @@ struct PredicateTests {
 	@Test
 	func compoundPredicate() {
 		let pred = (CharPredicate.char("a") <||> CharPredicate.char("b") <||> CharPredicate.char("c")) <+>
-			CharPredicate.whitespace.drop(allowFailures: true) <+>
+			CharPredicate.whitespace.drop() <+>
 			CharPredicate.numeral
 
 		#expect(apply(pred, "a 12") == "a12")

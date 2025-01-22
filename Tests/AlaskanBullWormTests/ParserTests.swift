@@ -32,8 +32,8 @@ struct ParserTests {
 	@Test
 	func anyParser() {
 		let exactP = CharPredicate.numeral <*> { Int($0) }
-		let doubleP = CharPredicate.char("d").drop() <+> CharPredicate.numeral <*> { Int($0).map { $0 * 2 } }
-		let tripleP = CharPredicate.char("t").drop() <+> CharPredicate.numeral <*> { Int($0).map { $0 * 3 } }
+		let doubleP = CharPredicate.char("d").drop(allowFailures: false) <+> CharPredicate.numeral <*> { Int($0).map { $0 * 2 } }
+		let tripleP = CharPredicate.char("t").drop(allowFailures: false) <+> CharPredicate.numeral <*> { Int($0).map { $0 * 3 } }
 		let allP = exactP <||> doubleP <||> tripleP
 
 		var src: Substring = "10d10t10"
