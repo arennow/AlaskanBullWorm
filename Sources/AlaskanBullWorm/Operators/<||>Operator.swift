@@ -1,13 +1,5 @@
-public struct AnyParser<Output>: Parser {
-	public let innerParsers: [any Parser<Output>]
-
-	public init(_ parsers: any Parser<Output>...) {
-		self.innerParsers = parsers
-	}
-
-	public init(_ parsers: Array<any Parser<Output>>) {
-		self.innerParsers = parsers
-	}
+public struct __AnySubParser<Output>: Parser {
+	let innerParsers: [any Parser<Output>]
 
 	public func parse(_ input: inout Substring) -> Output? {
 		for parser in self.innerParsers {
@@ -22,10 +14,10 @@ public struct AnyParser<Output>: Parser {
 infix operator <||>: AdditionPrecedence
 
 @_disfavoredOverload
-public func <||> <T>(lhs: some Parser<T>, rhs: some Parser<T>) -> AnyParser<T> {
-	AnyParser(lhs, rhs)
+public func <||> <T>(lhs: any Parser<T>, rhs: any Parser<T>) -> __AnySubParser<T> {
+	__AnySubParser(innerParsers: [lhs, rhs])
 }
 
-public func <||> <T>(lhs: AnyParser<T>, rhs: any Parser<T>) -> AnyParser<T> {
-	AnyParser(lhs.innerParsers + [rhs])
+public func <||> <T>(lhs: __AnySubParser<T>, rhs: any Parser<T>) -> __AnySubParser<T> {
+	__AnySubParser(innerParsers: lhs.innerParsers + CollectionOfOne(rhs))
 }
