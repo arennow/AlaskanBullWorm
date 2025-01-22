@@ -13,7 +13,7 @@ struct ASMLineParserTests {
 		let innerRelativeLocationPred = postfix(",", coreLocationPred) <&>
 			CharPredicate.whitespace.drop(allowFailures: true) <+>
 			coreLocationPred
-		let relativeLocationPred = prefix(" ", wrap("[", "]", innerRelativeLocationPred))
+		let relativeLocationPred = CharPredicate.whitespace.drop(allowFailures: true, replacement: ()) <+> wrap("[", "]", innerRelativeLocationPred)
 
 		let relativeLocationParser = relativeLocationPred <*> Location.init(array:)
 

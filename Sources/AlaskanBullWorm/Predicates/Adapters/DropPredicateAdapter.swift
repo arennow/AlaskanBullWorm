@@ -1,18 +1,11 @@
-struct DropPredicateAdapter<Inner: Parser>: Parser {
-	let inner: Inner
-	let allowFailures: Bool
-
-	func parse(_ src: inout Substring) -> Substring? {
-		if self.inner.parse(&src) != nil || self.allowFailures {
-			return ""
-		} else {
-			return nil
-		}
-	}
-}
-
 public extension Parser {
-	func drop(allowFailures: Bool = false) -> some Parser<Substring> {
-		DropPredicateAdapter(inner: self, allowFailures: allowFailures)
+	func drop<O>(allowFailures: Bool = false, replacement: O = Substring()) -> some Parser<O> {
+		InlineParser { input in
+			if self.parse(&input) != nil || allowFailures {
+				return replacement
+			} else {
+				return nil
+			}
+		}
 	}
 }
