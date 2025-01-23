@@ -1,9 +1,9 @@
 import Algorithms
 
 struct RepeatedPredicateParser: Parser {
-	let predicate: (Character) -> Bool
+	let predicate: @Sendable (Character) -> Bool
 
-	init(_ predicate: @escaping (Character) -> Bool) {
+	init(_ predicate: @Sendable @escaping (Character) -> Bool) {
 		self.predicate = predicate
 	}
 
@@ -36,5 +36,5 @@ struct RepeatedPredicateParser: Parser {
 }
 
 protocol IntoPredicate {
-	func into() -> (Character) -> Bool
+	func into() -> @Sendable (Character) -> Bool
 }

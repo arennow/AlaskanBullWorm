@@ -1,4 +1,4 @@
-public protocol Parser<Output> {
+public protocol Parser<Output>: Sendable {
 	associatedtype Output
 
 	func parse(_ input: inout Substring) -> Output?

@@ -1,5 +1,5 @@
 struct InlineParser<T>: Parser {
-	let parser: (inout Substring) -> T?
+	let parser: @Sendable (inout Substring) -> T?
 
 	func parse(_ input: inout Substring) -> T? {
 		let before = input

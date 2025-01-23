@@ -1,11 +1,11 @@
-public enum CharacterPredicate: IntoPredicate {
+public enum CharacterPredicate: Sendable, IntoPredicate {
 	case visible
 	case whitespace
 	case asciiLetter
 	case numeral
 	case exact(Character)
 
-	public func into() -> (Character) -> Bool {
+	public func into() -> @Sendable (Character) -> Bool {
 		switch self {
 			case .visible: !\.isWhitespace
 			case .whitespace: \.isWhitespace
