@@ -94,4 +94,14 @@ struct ParserTests {
 		#expect(char(.asciiLetter).parse(&src) == nil)
 		#expect(src == "1b2")
 	}
+
+	@Test
+	func tupleTransform() {
+		let intParser = char(.numeral) <*> { Int($0) }
+		let additionParser = (intParser, intParser) <*> { $0 + $1 }
+
+		var src: Substring = "45"
+		#expect(additionParser.parse(&src) == 9)
+		#expect(src.isEmpty)
+	}
 }
