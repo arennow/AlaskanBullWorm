@@ -104,4 +104,14 @@ struct ParserTests {
 		#expect(additionParser.parse(&src) == 9)
 		#expect(src.isEmpty)
 	}
+
+	@Test
+	func tupleJoin() {
+		let intParser = char(.numeral) <*> { Int($0) }
+		let additionParser = intParser <~> intParser <~> intParser <*> { $0 + $1 + $2 }
+
+		var src: Substring = "456"
+		#expect(additionParser.parse(&src) == 15)
+		#expect(src.isEmpty)
+	}
 }
