@@ -14,4 +14,10 @@ public extension Parser {
 			}
 		}
 	}
+
+	func optional() -> some Parser<Substring> where Output == Substring {
+		InlineParser { input in
+			self.parse(&input) ?? ""
+		}
+	}
 }

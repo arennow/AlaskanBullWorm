@@ -44,6 +44,21 @@ struct PredicateTests {
 		#expect(src == "abc123")
 	}
 
+	@Test(arguments: [
+		("123", 123),
+		("-123", -123)
+	])
+	func optional(input: String, output: Int) {
+		let parser =
+			char(.exact("-")).optional() <+>
+			many1(.numeral) <*>
+			{ Int($0) }
+
+		var input = input[...]
+		#expect(parser.parse(&input) == output)
+		#expect(input.isEmpty)
+	}
+
 	@Test
 	func then() {
 		do {
