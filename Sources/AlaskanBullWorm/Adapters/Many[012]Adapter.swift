@@ -18,6 +18,12 @@ fileprivate func manyN<T>(n: Int, _ inner: some Parser<T>) -> some Parser<Array<
 	}
 }
 
+public func many0(_ charPred: CharacterPredicate) -> some Parser<Substring> {
+	InlineParser { input in
+		many1(charPred).parse(&input) ?? ""
+	}
+}
+
 public func many1(_ charPred: CharacterPredicate) -> some Parser<Substring> {
 	RepeatedPredicateParser(charPred)
 }

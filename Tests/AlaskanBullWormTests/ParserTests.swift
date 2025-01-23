@@ -53,6 +53,15 @@ struct ParserTests {
 	}
 
 	@Test
+	func many0CharPredicate() {
+		let manyP = many0(.numeral)
+
+		var src: Substring = "abc"
+		#expect(manyP.parse(&src) == "")
+		#expect(src == "abc")
+	}
+
+	@Test
 	func many1Parser_success() {
 		let manyP = many1(exact("abc") <*> { String($0) })
 
