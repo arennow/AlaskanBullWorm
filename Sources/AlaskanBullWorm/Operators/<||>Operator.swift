@@ -1,9 +1,9 @@
 public struct __AnySubParser<Output>: Parser {
 	let innerParsers: [any Parser<Output>]
 
-	public func parse(_ input: inout Substring) -> Output? {
+	public func parse(_ input: inout Substring) throws -> Output? {
 		for parser in self.innerParsers {
-			if let out = parser.parse(&input) {
+			if let out = try parser.parse(&input) {
 				return out
 			}
 		}

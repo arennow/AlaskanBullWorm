@@ -3,7 +3,7 @@ struct WrapAdapter<Inner: Parser>: Parser {
 	let wrapperLeft: Character?
 	let wrapperRight: Character?
 
-	func parse(_ src: inout Substring) -> Inner.Output? {
+	func parse(_ src: inout Substring) throws -> Inner.Output? {
 		let before = src
 
 		if let wl = self.wrapperLeft {
@@ -31,20 +31,28 @@ struct WrapAdapter<Inner: Parser>: Parser {
 		} else {
 			src
 		}
-		// We assume that if `innerSrc` is empty, the inner predicate matched
-		// to the end of the inner string (in addition to just not failing)
-		guard let match = self.inner.parse(&innerSrc), innerSrc.isEmpty else {
-			src = before
-			return nil
-		}
 
-		if let wrapperRightIndex {
-			src.removeSubrange(src.startIndex...wrapperRightIndex)
-		} else {
-			src.removeAll()
-		}
+		switch Result(catching: { try self.inner.parse(&innerSrc) }) {
+			case .success(.some(let match)):
+				// We assume that if `innerSrc` is empty, the inner predicate matched
+				// to the end of the inner string (in addition to just not failing)
+				guard innerSrc.isEmpty else { fallthrough }
 
-		return match
+				if let wrapperRightIndex {
+					src.removeSubrange(src.startIndex...wrapperRightIndex)
+				} else {
+					src.removeAll()
+				}
+				return match
+
+			case .success(.none):
+				src = before
+				return nil
+
+			case .failure(let err):
+				src = before
+				throw err
+		}
 	}
 }
 

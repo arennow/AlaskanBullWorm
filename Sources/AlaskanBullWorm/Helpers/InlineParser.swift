@@ -1,13 +1,18 @@
 struct InlineParser<T>: Parser {
-	let parser: @Sendable (inout Substring) -> T?
+	let parser: @Sendable (inout Substring) throws -> T?
 
-	func parse(_ input: inout Substring) -> T? {
+	func parse(_ input: inout Substring) throws -> T? {
 		let before = input
-		if let out = self.parser(&input) {
-			return out
-		} else {
+		do {
+			if let out = try self.parser(&input) {
+				return out
+			} else {
+				input = before
+				return nil
+			}
+		} catch {
 			input = before
-			return nil
+			throw error
 		}
 	}
 }

@@ -11,7 +11,7 @@ struct RepeatedPredicateParser: Parser {
 		self.init(intoPred.into())
 	}
 
-	public func parse(_ src: inout Substring) -> Substring? {
+	public func parse(_ src: inout Substring) throws -> Substring? {
 		var rangeEndIndex = src.startIndex
 
 		let indexSequence = chain(src.indices.dropFirst(), CollectionOfOne(src.endIndex))

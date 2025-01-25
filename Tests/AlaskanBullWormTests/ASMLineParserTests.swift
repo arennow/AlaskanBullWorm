@@ -23,7 +23,7 @@ struct ASMLineParserTests {
 		let lineParser = instructionParser <~> locationsParser <*> ASMLine.init
 
 		var src: Substring = "cp $5 [%raf, $7]"
-		let line = try #require(lineParser.parse(&src))
+		let line = try #require(try lineParser.parse(&src))
 
 		#expect(line.instruction == .cp)
 		#expect(line.locations == [.literal(5), .relative(base: .register("raf"), offset: .literal(7))])

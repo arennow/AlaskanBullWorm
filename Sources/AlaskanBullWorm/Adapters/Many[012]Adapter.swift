@@ -1,7 +1,7 @@
 public func many0<T>(_ inner: some Parser<T>) -> some Parser<Array<T>> {
 	InlineParser { input in
-		(0...).mapUntilNil { _ in
-			inner.parse(&input)
+		try (0...).mapUntilNil { _ in
+			try inner.parse(&input)
 		}
 	}
 }
@@ -11,7 +11,7 @@ public func many2<T>(_ inner: some Parser<T>) -> some Parser<Array<T>> { manyN(n
 
 fileprivate func manyN<T>(n: Int, _ inner: some Parser<T>) -> some Parser<Array<T>> {
 	InlineParser { input in
-		guard let zeroOut = many0(inner).parse(&input),
+		guard let zeroOut = try many0(inner).parse(&input),
 			  zeroOut.count >= n
 		else { return nil }
 		return zeroOut
@@ -20,7 +20,7 @@ fileprivate func manyN<T>(n: Int, _ inner: some Parser<T>) -> some Parser<Array<
 
 public func many0(_ charPred: CharacterPredicate) -> some Parser<Substring> {
 	InlineParser { input in
-		many1(charPred).parse(&input) ?? ""
+		try many1(charPred).parse(&input) ?? ""
 	}
 }
 
