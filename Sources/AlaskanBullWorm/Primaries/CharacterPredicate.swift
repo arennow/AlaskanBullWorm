@@ -1,4 +1,6 @@
 public enum CharacterPredicate: Sendable, IntoPredicate {
+	case any
+	case custom(@Sendable (Character) -> Bool)
 	case visible
 	case whitespace
 	case asciiLetter
@@ -7,6 +9,8 @@ public enum CharacterPredicate: Sendable, IntoPredicate {
 
 	public func into() -> @Sendable (Character) -> Bool {
 		switch self {
+			case .any: { _ in true }
+			case .custom(let p): p
 			case .visible: !\.isWhitespace
 			case .whitespace: \.isWhitespace
 			case .asciiLetter: \.isASCII && \.isLetter
