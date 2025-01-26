@@ -3,14 +3,12 @@ import Testing
 
 struct PredicateTests {
 	@Test(arguments: [
-		("abc def", " def"),
-		("abc ", " "),
-		("abc", ""),
+		Run("abc def", "abc", " def"),
+		Run("abc ", "abc", " "),
+		Run("abc", "abc", ""),
 	])
-	func takeVisible(src: Substring, remaining: Substring) throws {
-		var src = src
-		#expect(try many1(.visible).parse(&src) == "abc")
-		#expect(src == remaining)
+	func takeVisible(run: Run<Substring>) throws {
+		try run.test(many1(.visible))
 	}
 
 	@Test
@@ -181,20 +179,17 @@ struct PredicateTests {
 		#expect(src == "123a")
 	}
 
-	@Test
-	func compoundPredicate() throws {
+	@Test(arguments: [
+		Run("a 12", "a12", ""),
+		Run("b16", "b16", ""),
+		Run("c\t\t19", "c19", ""),
+		Run("d25", nil, "d25"),
+	])
+	func compoundPredicate(run: Run<Substring>) throws {
 		let pred = (char(.exact("a")) <||> char(.exact("b")) <||> char(.exact("c"))) <+>
 			many1(.whitespace).drop() <+>
 			many1(.numeral)
 
-		#expect(try apply(pred, "a 12") == "a12")
-		#expect(try apply(pred, "b16") == "b16")
-		#expect(try apply(pred, "c\t\t19") == "c19")
-		#expect(try apply(pred, "d25") == nil)
+		try run.test(pred)
 	}
-}
-
-fileprivate func apply(_ predicate: some Parser<Substring>, _ src: String) throws -> Substring? {
-	var src = src[...]
-	return try predicate.parse(&src)
 }
