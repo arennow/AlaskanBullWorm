@@ -186,9 +186,9 @@ struct PredicateTests {
 		Run("d25", nil, "d25"),
 	])
 	func compoundPredicate(run: Run<Substring>) throws {
-		let pred = (char(.exact("a")) <||> char(.exact("b")) <||> char(.exact("c"))) <+>
-			many1(.whitespace).drop() <+>
-			many1(.numeral)
+		let pred = (char(.exact("a")) <||> char(.exact("b")) <||> char(.exact("c")))
+		<+>
+		<<many1(.numeral)
 
 		try run.test(pred)
 	}
