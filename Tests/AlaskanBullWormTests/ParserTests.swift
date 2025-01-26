@@ -132,4 +132,34 @@ struct ParserTests {
 		#expect(try additionParser.parse(&src) == 15)
 		#expect(src.isEmpty)
 	}
+
+	@Test(arguments: [
+		Run("abcd", "abc", "d"),
+		Run(" abcd", "abc", "d"),
+		Run("  abcd", "abc", "d"),
+		Run("\t\t\tabcd", "abc", "d"),
+	])
+	func leftWhitespace(run: Run<Substring>) throws {
+		try run.test(<<exact("abc"))
+	}
+
+	@Test(arguments: [
+		Run("abc", "abc", ""),
+		Run("abc ", "abc", ""),
+		Run("abc  ", "abc", ""),
+		Run("abc\t\t\t\t", "abc", ""),
+	])
+	func rightWhitespace(run: Run<Substring>) throws {
+		try run.test(exact("abc")>>)
+	}
+
+	@Test(arguments: [
+		Run(" abc", "abc", ""),
+		Run(" abc ", "abc", ""),
+		Run(" abc  ", "abc", ""),
+		Run(" abc\t\t\t\t", "abc", ""),
+	])
+	func bothWhitespace(run: Run<Substring>) throws {
+		try run.test(<<exact("abc")>>)
+	}
 }
