@@ -11,7 +11,7 @@ public struct __AnySubParser<Output>: Parser {
 	}
 }
 
-infix operator <||>: AdditionPrecedence
+infix operator <||>: LogicalDisjunctionPrecedence
 
 @_disfavoredOverload
 public func <||> <T>(lhs: any Parser<T>, rhs: any Parser<T>) -> __AnySubParser<T> {

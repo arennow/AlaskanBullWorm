@@ -1,4 +1,4 @@
-infix operator <+>: MultiplicationPrecedence
+infix operator <+>: AdditionPrecedence
 
 public func <+> (lhs: some Parser<Substring>, rhs: some Parser<Substring>) -> some Parser<Substring> {
 	InlineParser { src in

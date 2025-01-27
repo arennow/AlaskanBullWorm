@@ -1,4 +1,4 @@
-infix operator <&>: AdditionPrecedence
+infix operator <&>: LogicalConjunctionPrecedence
 
 public func <&> <T>(lhs: some Parser<T>, rhs: some Parser<T>) -> some Parser<Array<T>> {
 	InlineParser {
