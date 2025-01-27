@@ -1,5 +1,3 @@
-import Algorithms
-
 struct RepeatedPredicateParser: Parser {
 	let predicate: @Sendable (Character) -> Bool
 
@@ -14,7 +12,7 @@ struct RepeatedPredicateParser: Parser {
 	public func parse(_ src: inout Substring) throws -> Substring? {
 		var rangeEndIndex = src.startIndex
 
-		let indexSequence = chain(src.indices.dropFirst(), CollectionOfOne(src.endIndex))
+		let indexSequence = Bookend(src.indices.dropFirst(), with: src.endIndex)
 		for (i, c) in zip(indexSequence, src) {
 			if self.predicate(c) {
 				rangeEndIndex = i
