@@ -20,7 +20,7 @@ struct Run<T: Equatable & Sendable>: Sendable {
 
 	func test(_ parser: some Parser<T>) throws {
 		var input = self.input
-		#expect(try parser.parse(&input) == self.output)
+		try #expect(parser.parse(&input) == self.output)
 		#expect(input == self.remainder)
 	}
 }

@@ -14,7 +14,7 @@ struct PredicateTests {
 	@Test
 	func takeExactString() throws {
 		var src: Substring = "abcdef"
-		#expect(try exact("abc").parse(&src) == "abc")
+		try #expect(exact("abc").parse(&src) == "abc")
 		#expect(src == "def")
 	}
 
@@ -22,7 +22,7 @@ struct PredicateTests {
 	func drop_success() throws {
 		var src: Substring = "abc123"
 		let pred = many1(.asciiLetter).drop()
-		#expect(try pred.parse(&src) != nil)
+		try #expect(pred.parse(&src) != nil)
 		#expect(src == "123")
 	}
 
@@ -30,7 +30,7 @@ struct PredicateTests {
 	func drop_allowFailures() throws {
 		var src: Substring = "abc123"
 		let pred = many1(.whitespace).drop(allowFailures: true)
-		#expect(try pred.parse(&src) != nil)
+		try #expect(pred.parse(&src) != nil)
 		#expect(src == "abc123")
 	}
 
@@ -38,7 +38,7 @@ struct PredicateTests {
 	func drop_disallowFailures() throws {
 		var src: Substring = "abc123"
 		let pred = many1(.whitespace).drop(allowFailures: false)
-		#expect(try pred.parse(&src) == nil)
+		try #expect(pred.parse(&src) == nil)
 		#expect(src == "abc123")
 	}
 
@@ -53,7 +53,7 @@ struct PredicateTests {
 			{ Int($0) }
 
 		var input = input[...]
-		#expect(try parser.parse(&input) == output)
+		try #expect(parser.parse(&input) == output)
 		#expect(input.isEmpty)
 	}
 
@@ -61,25 +61,25 @@ struct PredicateTests {
 	func then() throws {
 		do {
 			var src: Substring = "abc"
-			#expect(try (char(.exact("a")) <+> char(.exact("b"))).parse(&src) == "ab")
+			try #expect((char(.exact("a")) <+> char(.exact("b"))).parse(&src) == "ab")
 			#expect(src == "c")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect(try (char(.exact("a")) <+> char(.exact("¿"))).parse(&src) == nil)
+			try #expect((char(.exact("a")) <+> char(.exact("¿"))).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect(try (char(.exact("¿")) <+> char(.exact("b"))).parse(&src) == nil)
+			try #expect((char(.exact("¿")) <+> char(.exact("b"))).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 
 		do {
 			var src: Substring = "abc"
-			#expect(try (char(.exact("¿")) <+> char(.exact("¿"))).parse(&src) == nil)
+			try #expect((char(.exact("¿")) <+> char(.exact("¿"))).parse(&src) == nil)
 			#expect(src == "abc")
 		}
 	}
@@ -88,7 +88,7 @@ struct PredicateTests {
 	func wrapped_successful() throws {
 		var src: Substring = "[abc]def"
 
-		#expect(try wrap("[", "]", many1(.visible)).parse(&src) == "abc")
+		try #expect(wrap("[", "]", many1(.visible)).parse(&src) == "abc")
 		#expect(src == "def")
 	}
 
@@ -96,14 +96,14 @@ struct PredicateTests {
 	func wrapped_successfulNested() throws {
 		var src: Substring = "[(abc)]def"
 		let pred = wrap("[", "]", wrap("(", ")", many1(.visible)))
-		#expect(try pred.parse(&src) == "abc")
+		try #expect(pred.parse(&src) == "abc")
 		#expect(src == "def")
 	}
 
 	@Test
 	func wrapped_failedInner() throws {
 		var src: Substring = "[a c]"
-		#expect(try wrap("[", "]", many1(.visible)).parse(&src) == nil)
+		try #expect(wrap("[", "]", many1(.visible)).parse(&src) == nil)
 		#expect(src == "[a c]")
 	}
 
@@ -119,42 +119,42 @@ struct PredicateTests {
 	@Test
 	func wrapped_failedLeading() throws {
 		var src: Substring = "(abc]"
-		#expect(try wrap("[", "]", many1(.visible)).parse(&src) == nil)
+		try #expect(wrap("[", "]", many1(.visible)).parse(&src) == nil)
 		#expect(src == "(abc]")
 	}
 
 	@Test
 	func wrapped_failedTrailing() throws {
 		var src: Substring = "[abc)"
-		#expect(try wrap("[", "]", many1(.visible)).parse(&src) == nil)
+		try #expect(wrap("[", "]", many1(.visible)).parse(&src) == nil)
 		#expect(src == "[abc)")
 	}
 
 	@Test
 	func prefix_successful() throws {
 		var src: Substring = "|abc"
-		#expect(try prefix("|", many1(.visible)).parse(&src) == "abc")
+		try #expect(prefix("|", many1(.visible)).parse(&src) == "abc")
 		#expect(src.isEmpty)
 	}
 
 	@Test
 	func prefix_failed() throws {
 		var src: Substring = "<abc"
-		#expect(try prefix("|", many1(.visible)).parse(&src) == nil)
+		try #expect(prefix("|", many1(.visible)).parse(&src) == nil)
 		#expect(src == "<abc")
 	}
 
 	@Test
 	func postfix_successful() throws {
 		var src: Substring = "abc|"
-		#expect(try postfix("|", many1(.visible)).parse(&src) == "abc")
+		try #expect(postfix("|", many1(.visible)).parse(&src) == "abc")
 		#expect(src.isEmpty)
 	}
 
 	@Test
 	func postfix_failed() throws {
 		var src: Substring = "abc>"
-		#expect(try postfix("|", many1(.visible)).parse(&src) == nil)
+		try #expect(postfix("|", many1(.visible)).parse(&src) == nil)
 		#expect(src == "abc>")
 	}
 
@@ -163,9 +163,9 @@ struct PredicateTests {
 		let pred = many1(.numeral) <||> char(.exact("x"))
 
 		var src: Substring = "x123a"
-		#expect(try pred.parse(&src) == "x")
-		#expect(try pred.parse(&src) == "123")
-		#expect(try pred.parse(&src) == nil)
+		try #expect(pred.parse(&src) == "x")
+		try #expect(pred.parse(&src) == "123")
+		try #expect(pred.parse(&src) == nil)
 		#expect(src == "a")
 	}
 
@@ -174,7 +174,7 @@ struct PredicateTests {
 		let pred = many1(.numeral) <*> { _ in throw TestError() } <||> char(.exact("x"))
 
 		var src: Substring = "x123a"
-		#expect(try pred.parse(&src) == "x")
+		try #expect(pred.parse(&src) == "x")
 		#expect(throws: TestError()) { try pred.parse(&src) == "123" }
 		#expect(src == "123a")
 	}
