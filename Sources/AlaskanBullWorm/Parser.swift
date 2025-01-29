@@ -5,7 +5,7 @@ public protocol Parser<Output>: Sendable {
 }
 
 public extension Parser {
-	func drop(allowFailures: Bool = true) -> some Parser<Void> {
+	func drop(allowFailures: Bool) -> some Parser<Void> {
 		InlineParser { input in
 			if try self.parse(&input) != nil || allowFailures {
 				return ()

@@ -32,7 +32,7 @@ struct PredicateTests {
 	@Test
 	func drop_success() throws {
 		var src: Substring = "abc123"
-		let pred = many1(.asciiLetter).drop()
+		let pred = many1(.asciiLetter).drop(allowFailures: false)
 		try #expect(pred.parse(&src) != nil)
 		#expect(src == "123")
 	}
