@@ -11,6 +11,16 @@ struct PredicateTests {
 		try run.test(many1(.visible))
 	}
 
+	@Test(arguments: [
+		Run("abc def", "abc", " def"),
+		Run("a_b-c$", "a_b-c", "$"),
+		Run("ab|c", "ab", "|c"),
+		Run("ab(c)", "ab", "(c)"),
+	])
+	func takeAsciiIdentifier(run: Run<Substring>) throws {
+		try run.test(many1(.asciiIdentifier))
+	}
+
 	@Test
 	func takeExactString() throws {
 		var src: Substring = "abcdef"

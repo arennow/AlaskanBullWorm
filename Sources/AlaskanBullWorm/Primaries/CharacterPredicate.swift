@@ -6,6 +6,9 @@ public enum CharacterPredicate: Sendable, IntoPredicate {
 	case visible
 	case whitespace
 	case asciiLetter
+	/// ASCII characters that can be used in general-purpose identifiers.
+	/// Equivalent to `[A-Za-z_\-]+`
+	case asciiIdentifier
 	case numeral
 
 	public func into() -> @Sendable (Character) -> Bool {
@@ -17,6 +20,7 @@ public enum CharacterPredicate: Sendable, IntoPredicate {
 			case .visible: !\.isWhitespace
 			case .whitespace: \.isWhitespace
 			case .asciiLetter: \.isASCII && \.isLetter
+			case .asciiIdentifier: Self.asciiLetter.into() || { ["_", "-"].contains($0) }
 			case .numeral: \.isWholeNumber
 		}
 	}
