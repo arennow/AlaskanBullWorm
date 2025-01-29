@@ -1,21 +1,23 @@
 public enum CharacterPredicate: Sendable, IntoPredicate {
-	case any
 	case custom(@Sendable (Character) -> Bool)
+	case any
+	case anyExcept(Character)
+	case exact(Character)
 	case visible
 	case whitespace
 	case asciiLetter
 	case numeral
-	case exact(Character)
 
 	public func into() -> @Sendable (Character) -> Bool {
 		switch self {
-			case .any: { _ in true }
 			case .custom(let p): p
+			case .any: { _ in true }
+			case .anyExcept(let c): { $0 != c }
+			case .exact(let c): { $0 == c }
 			case .visible: !\.isWhitespace
 			case .whitespace: \.isWhitespace
 			case .asciiLetter: \.isASCII && \.isLetter
 			case .numeral: \.isWholeNumber
-			case .exact(let c): { $0 == c }
 		}
 	}
 }
