@@ -7,7 +7,7 @@ public enum CharacterPredicate: Sendable, IntoPredicate {
 	case whitespace
 	case asciiLetter
 	/// ASCII characters that can be used in general-purpose identifiers.
-	/// Equivalent to `[A-Za-z_\-]+`
+	/// Equivalent to `[A-Za-z0-9_\-]+`
 	case asciiIdentifier
 	case numeral
 
@@ -20,7 +20,10 @@ public enum CharacterPredicate: Sendable, IntoPredicate {
 			case .visible: !\.isWhitespace
 			case .whitespace: \.isWhitespace
 			case .asciiLetter: \.isASCII && \.isLetter
-			case .asciiIdentifier: Self.asciiLetter.into() || { ["_", "-"].contains($0) }
+			case .asciiIdentifier:
+				Self.asciiLetter.into() ||
+					Self.numeral.into() ||
+					{ ["_", "-"].contains($0) }
 			case .numeral: \.isWholeNumber
 		}
 	}

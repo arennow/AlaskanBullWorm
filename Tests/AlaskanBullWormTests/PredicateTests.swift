@@ -16,6 +16,7 @@ struct PredicateTests {
 		Run("a_b-c$", "a_b-c", "$"),
 		Run("ab|c", "ab", "|c"),
 		Run("ab(c)", "ab", "(c)"),
+		Run("a1(c)", "a1", "(c)"),
 	])
 	func takeAsciiIdentifier(run: Run<Substring>) throws {
 		try run.test(many1(.asciiIdentifier))
